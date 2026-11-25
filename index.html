@@ -185,16 +185,12 @@
     </div>
   </div>
 
-  <!-- LOGIN SCREEN (Password Only — No Username) -->
+  <!-- LOGIN SCREEN (Password Only — No Username & No Worker URL Box) -->
   <div id="loginScreen" class="card" style="max-width: 420px; margin: 40px auto;">
     <h2 style="margin-top:0;">🔐 Enter Access Passcode</h2>
     <p style="color:var(--muted); font-size:0.88rem; margin-top:-6px;">
       Key in your <b>OPS</b> or <b>ADMIN</b> passcode to unlock.
     </p>
-    <div style="margin-bottom:12px;">
-      <label>Cloudflare Worker URL</label>
-      <input type="url" id="workerUrlInput" class="w-100" placeholder="https://your-worker.yourname.workers.dev" />
-    </div>
     <div style="margin-bottom:14px;">
       <label>Passcode (OPS or ADMIN)</label>
       <input type="password" id="passcodeInput" class="w-100" placeholder="Enter passcode..." onkeydown="if(event.key==='Enter') login()" />
@@ -451,7 +447,7 @@
 <div id="toast"></div>
 
 <script>
-  // Replace with your live Cloudflare Worker URL if you want it pre-filled
+  // Your Cloudflare Worker URL is configured here so users don't see or type it
   const DEFAULT_WORKER_URL = "https://drinks.dzul1234.workers.dev";
 
   let state = { role: null, drinks: [], movements: [] };
@@ -467,7 +463,6 @@
     setTimeout(() => (t.style.display = "none"), 2800);
   }
 
-  // Theme handling (Light / Dim / Dark)
   function setTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("ops_theme", theme);
@@ -492,7 +487,7 @@
   }
 
   async function api(path, options = {}) {
-    const cleanBase = workerUrl.replace(/\/+$/, "");
+    const cleanBase = (workerUrl || DEFAULT_WORKER_URL).replace(/\/+$/, "");
     const res = await fetch(`${cleanBase}${path}`, {
       ...options,
       headers: {
@@ -507,22 +502,20 @@
   }
 
   async function login() {
-    const urlInput = document.getElementById("workerUrlInput").value.trim();
     const passInput = document.getElementById("passcodeInput").value.trim();
     const errEl = document.getElementById("loginError");
     errEl.textContent = "";
 
-    if (!urlInput || !passInput) {
-      errEl.textContent = "Please enter both Worker URL and Passcode.";
+    if (!passInput) {
+      errEl.textContent = "Please enter your passcode.";
       return;
     }
 
-    workerUrl = urlInput;
+    workerUrl = localStorage.getItem("ops_worker_url") || DEFAULT_WORKER_URL;
     passcode = passInput;
 
     try {
       const res = await api("/api/login", { method: "POST" });
-      localStorage.setItem("ops_worker_url", workerUrl);
       sessionStorage.setItem("ops_pass", passcode);
       state.role = res.role;
       enterApp();
@@ -574,9 +567,16 @@
     }
   }
 
+  function getSortedActiveDrinks() {
+    return state.drinks
+      .filter((d) => d.is_active !== false)
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+  }
+
   function buildDrinkOptionsHTML() {
-    const activeDrinks = state.drinks.filter((d) => d.is_active !== false);
-    let html = `<option value="">-- Select Drink --</option>`;
+    const activeDrinks = getSortedActiveDrinks();
+    let html = `<option value="">-- Select Drink (A–Z) --</option>`;
     for (const d of activeDrinks) {
       html += `<option value="${d.id}">${d.name} [${d.pack_unit} | Cage: ${d.cage_qty}]</option>`;
     }
@@ -672,7 +672,7 @@
     }
   }
 
-  function copyChatSummary(movementType) {
+  function copyChatSummary() {
     const date = document.getElementById("topupDate").value;
     const day = document.getElementById("topupDay").value;
     const shift = document.getElementById("topupShift").value;
@@ -747,10 +747,10 @@
     });
   }
 
-  // Admin Edit / Update / Delete
   function populateEditDrinkDropdown() {
     const sel = document.getElementById("editDrink");
-    sel.innerHTML = state.drinks.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
+    const sorted = getSortedActiveDrinks();
+    sel.innerHTML = sorted.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
   }
 
   function openEditModal(id) {
@@ -808,7 +808,6 @@
     }
   }
 
-  // Admin: Add Master Drink
   async function saveMasterDrink() {
     const name = document.getElementById("newDrinkName").value.trim();
     if (!name) return showToast("⚠️ Enter a drink name.");
@@ -833,7 +832,6 @@
     }
   }
 
-  // Exports: CSV + JSON Backup / Restore
   function exportCSV() {
     const headers = ["No", "Day", "Date", "Type", "Drinks Type", "Qty", "Pack Unit", "Officer", "Shift", "Notes"];
     const rows = state.movements.map((m, i) => [
@@ -893,10 +891,8 @@
     btn.classList.add("active");
   }
 
-  // Boot
   setTheme(localStorage.getItem("ops_theme") || "dim");
   initDates();
-  document.getElementById("workerUrlInput").value = workerUrl;
   if (passcode) {
     document.getElementById("passcodeInput").value = passcode;
     login();
