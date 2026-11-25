@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Fridge & Cage Drink Ops — Procedure Manuals</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #111;
+    background: #fff;
+    margin: 0;
+    line-height: 1.55;
+    font-size: 12pt;
+  }
+  .page {
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 18mm 16mm;
+  }
+  .page-break { page-break-after: always; }
+  h1 { font-size: 22pt; margin: 0 0 4px; color: #1d4ed8; }
+  h2 { font-size: 15pt; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 2px solid #1d4ed8; color: #1d4ed8; }
+  h3 { font-size: 12.5pt; margin: 16px 0 6px; color: #111; }
+  p, li { margin: 6px 0; }
+  ul, ol { padding-left: 20px; }
+  .subtitle { color: #555; font-size: 11pt; margin-top: 0; }
+  .cover { text-align: center; padding-top: 60mm; }
+  .cover h1 { font-size: 30pt; }
+  .cover .role {
+    display: inline-block; margin-top: 10px; padding: 6px 18px;
+    border: 2px solid #1d4ed8; border-radius: 999px;
+    color: #1d4ed8; font-weight: 700; font-size: 13pt; letter-spacing: 0.05em;
+  }
+  .cover .meta { color: #666; margin-top: 30px; font-size: 10.5pt; }
+  .box {
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #1d4ed8;
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin: 12px 0;
+  }
+  .box.warn { border-left-color: #d97706; background: #fffbeb; }
+  .box.danger { border-left-color: #b91c1c; background: #fef2f2; }
+  .box.ok { border-left-color: #15803d; background: #f0fdf4; }
+  .box strong { display: block; margin-bottom: 4px; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10.5pt;
+  }
+  th, td { border: 1px solid #cbd5e1; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #eef2f6; font-weight: 700; }
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 38px;
+    margin: 10px 0;
+  }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 1px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #1d4ed8; color: #fff;
+    font-weight: 700; font-size: 11pt;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .footer-note {
+    margin-top: 30px; padding-top: 10px; border-top: 1px solid #cbd5e1;
+    color: #666; font-size: 9.5pt; text-align: center;
+  }
+  .toc { margin: 10px 0 0; padding-left: 20px; }
+  .toc li { margin: 4px 0; }
+  code {
+    background: #eef2f6; padding: 1px 5px; border-radius: 4px;
+    font-family: Consolas, Monaco, monospace; font-size: 10pt;
+  }
+  .kbd {
+    display: inline-block; padding: 1px 7px; border: 1px solid #94a3b8;
+    border-bottom-width: 2px; border-radius: 4px; background: #f1f5f9;
+    font-family: Consolas, Monaco, monospace; font-size: 9.5pt;
+  }
+  .screen-label {
+    display: inline-block; background: #1d4ed8; color: #fff;
+    padding: 2px 8px; border-radius: 4px; font-size: 9.5pt;
+    font-weight: 700; letter-spacing: 0.03em;
+  }
+  @page { margin: 12mm; }
+  @media print {
+    body { font-size: 11pt; }
+    .page { padding: 0; max-width: none; }
+    h2 { page-break-after: avoid; }
+    .box, table, .steps > li { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- MANUAL 1 — OPS STAFF                                         -->
+<!-- ============================================================ -->
+
+<div class="page page-break">
+  <div class="cover">
+    <h1>Fridge &amp; Cage Drink Ops</h1>
+    <p class="subtitle">Procedure Manual</p>
+    <div class="role">OPS STAFF</div>
+    <p class="meta">
+      For daily drink top-up and cage stock recording<br />
+      Print or save this manual and keep it near the workstation.
+    </p>
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>Contents</h2>
+  <ol class="toc">
+    <li>Logging In</li>
+    <li>Part A — Fridge Top-Up (Cage → Fridge)</li>
+    <li>Part B — Cage Stock (Incoming &amp; Current)</li>
+    <li>Part C — Balance (View Only)</li>
+    <li>Logs (View Only)</li>
+    <li>Exporting and Printing</li>
+    <li>Daily Checklist</li>
+    <li>What NOT to Do</li>
+    <li>Troubleshooting</li>
+  </ol>
+
+  <div class="box">
+    <strong>Your role in one sentence</strong>
+    You record drinks that move out of the cage into the fridge (Part A) and drinks that arrive or change inside the cage (Part B). Everything else is view-only for you.
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>1. Logging In</h2>
+  <ol class="steps">
+    <li>Open the Fridge &amp; Cage Drink Ops link given by your supervisor in any browser (phone or PC).</li>
+    <li>You will see the <span class="screen-label">Enter Access Passcode</span> screen.</li>
+    <li>Type your <b>OPS</b> passcode into the password box.</li>
+    <li>Press <span class="kbd">Enter</span> or click <b>Unlock System</b>.</li>
+    <li>When you see the badge <b>👷 OPS MODE</b> at the top right, you are logged in.</li>
+  </ol>
+
+  <div class="box warn">
+    <strong>If the passcode is wrong</strong>
+    A red message will appear under the button. Check with your supervisor — do not keep guessing, or you may lock the account.
+  </div>
+
+  <div class="box">
+    <strong>Staying logged in</strong>
+    Closing the browser tab logs you out. Opening the link again on the same device remembers your passcode for that session only.
+  </div>
+
+  <h3>Logging out</h3>
+  <p>Click the <b>Logout</b> button at the top right. Always log out on shared phones or tablets.</p>
+</div>
+
+<div class="page page-break">
+  <h2>2. Part A — Fridge Top-Up (Cage → Fridge)</h2>
+  <p class="subtitle">Use this when you move drinks FROM the cage INTO the fridge.</p>
+
+  <ol class="steps">
+    <li>Click the tab <span class="screen-label">📥 PART A (FRIDGE)</span>.</li>
+    <li>Check the <b>Date</b> field. It is filled automatically. Only change it if you are recording an earlier top-up — keep the format <code>Mon, 25 Nov 2026, 14:30 hrs</code>.</li>
+    <li>In <b>Updated By</b>, choose your name (or <i>Ops Team</i>).</li>
+    <li>On the first row, open the <b>drink dropdown</b> and select the drink you moved.</li>
+    <li>Type the quantity in the <b>Carton qty</b> box. You can write <code>2</code> or <code>12x2</code> if your supervisor asks for that format.</li>
+    <li>Add a <b>Remarks</b> note only if needed (e.g. "for event").</li>
+    <li>Repeat on the next rows for other drinks.</li>
+    <li>Click <b>✅ UPDATE FRIDGE</b> once at the end.</li>
+  </ol>
+
+  <div class="box ok">
+    <strong>What you will see after updating</strong>
+    A green toast says <i>Updated N record(s) for FRIDGE!</i> and each saved row shows a small <b>Logged</b> badge with the quantity you entered.
+  </div>
+
+  <div class="box warn">
+    <strong>Important</strong>
+    Only click <b>UPDATE FRIDGE</b> once you have finished all rows. If you click it twice with the same numbers, nothing is duplicated — the system skips rows you have not changed.
+  </div>
+
+  <h3>Adding more rows</h3>
+  <p>Click <b>+ Add Drink Row</b> if you need more than the visible rows. Click the red <b>✕</b> to remove a row you no longer need.</p>
+
+  <h3>Clearing the form</h3>
+  <p><b>🧹 Clear Form</b> wipes everything you typed but does <u>not</u> delete any saved records. Safe to use at the start of a new shift.</p>
+
+  <h3>If the drink is not in the list</h3>
+  <p>Choose <b>➕ Other / New Drink (Type Name)</b> in the dropdown, then type the drink name in the box that appears. Tell your supervisor so ADMIN can add it to the master list.</p>
+</div>
+
+<div class="page page-break">
+  <h2>3. Part B — Cage Stock (Incoming &amp; Current)</h2>
+  <p class="subtitle">Use this when a delivery arrives, or when you adjust the stock inside the cage.</p>
+
+  <ol class="steps">
+    <li>Click the tab <span class="screen-label">🚚 PART B (CAGE)</span>.</li>
+    <li>Check the <b>Date</b> and <b>Updated By</b> fields — same as Part A.</li>
+    <li>Select the drink from the dropdown.</li>
+    <li>Type the quantity received or adjusted in <b>Carton qty</b>.</li>
+    <li>Add a <b>Remarks</b> note for context (e.g. "delivery PO 1234", "spoilt 2 cartons").</li>
+    <li>Repeat for other drinks on the same delivery.</li>
+    <li>Click <b>✅ UPDATE CAGE</b>.</li>
+  </ol>
+
+  <div class="box ok">
+    <strong>What you will see after updating</strong>
+    A green toast says <i>Updated N record(s) for CAGE!</i> and saved rows show a <b>Logged</b> badge.
+  </div>
+
+  <div class="box">
+    <strong>Difference between Part A and Part B</strong>
+    <table style="margin-top:6px;">
+      <tr><th>Part</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>A — Fridge</td><td>Drink leaves the cage, goes into the fridge</td><td>You take 2 cartons of Milo from cage and put them in the fridge</td></tr>
+      <tr><td>B — Cage</td><td>Drink arrives, or cage stock changes</td><td>A lorry delivers 10 cartons of Milo into the cage</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>4. Part C — Balance (View Only)</h2>
+  <p class="subtitle">Check the current stock level of every drink.</p>
+
+  <ol class="steps">
+    <li>Click the tab <span class="screen-label">📊 PART C (BALANCE)</span>.</li>
+    <li>The table shows: drink name, pack type, <b>BALANCE (CAGE)</b>, <b>TOPPED UP (FRIDGE)</b>, and notes.</li>
+    <li>Numbers in <span style="color:#b91c1c; font-weight:700;">red</span> mean cage stock is 1 or less — tell your supervisor to reorder.</li>
+    <li>Use the <b>Sort Drink</b> dropdown to switch between A–Z and Z–A.</li>
+    <li>Click <b>🔄 Refresh</b> if you think the numbers are out of date.</li>
+  </ol>
+
+  <div class="box warn">
+    <strong>View only for OPS</strong>
+    You cannot edit balances directly from Part C. If a balance looks wrong, record the correction in Part B with a clear remark, and tell ADMIN.
+  </div>
+
+  <h2>5. Logs (View Only)</h2>
+  <ol class="steps">
+    <li>Click the tab <span class="screen-label">📋 LOGS</span>.</li>
+    <li>Every Part A and Part B record appears here, newest first.</li>
+    <li>Filter with <b>Category</b> (All / Fridge / Cage), a <b>date</b>, or change the <b>sort</b>.</li>
+    <li>Click <b>All Dates</b> to remove the date filter.</li>
+  </ol>
+
+  <div class="box">
+    <strong>Why the logs matter</strong>
+    The logs are your proof of what was moved and when. If anyone asks "who topped up the fridge on Tuesday?", the answer is here.
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>6. Exporting and Printing</h2>
+
+  <h3>Export to CSV (spreadsheet)</h3>
+  <ol class="steps">
+    <li>Go to the <b>LOGS</b> tab or the <b>PART C</b> tab.</li>
+    <li>Click <b>📄 Export CSV</b>.</li>
+    <li>The file downloads to your device. Open it in Excel or Google Sheets.</li>
+  </ol>
+
+  <h3>Print or Save as PDF</h3>
+  <ol class="steps">
+    <li>Go to the tab you want (Part C or Logs).</li>
+    <li>Click <b>🖨️ Print / Save PDF</b>.</li>
+    <li>In the browser print dialog, choose <b>Save as PDF</b>.</li>
+    <li>Send the PDF to your supervisor on WhatsApp or email.</li>
+  </ol>
+
+  <div class="box ok">
+    <strong>Tip</strong>
+    The PDF is clean — it only shows the table and the last-updated stamp. Buttons and menus are hidden automatically.
+  </div>
+
+  <h2>7. Daily Checklist</h2>
+  <table>
+    <tr><th>When</th><th>Action</th></tr>
+    <tr><td>Start of shift</td><td>Log in, check Part C for any red (low) stock, report to supervisor.</td></tr>
+    <tr><td>Every fridge top-up</td><td>Record in Part A immediately. Do not wait until end of shift.</td></tr>
+    <tr><td>Every delivery</td><td>Record in Part B immediately, with PO or lorry number in Remarks.</td></tr>
+    <tr><td>End of shift</td><td>Open Part C and confirm the numbers look right. Screenshot or print if required.</td></tr>
+    <tr><td>Before leaving</td><td>Click <b>Logout</b>.</td></tr>
+  </table>
+
+  <h2>8. What NOT to Do</h2>
+  <div class="box danger">
+    <strong>Avoid these — they cause wrong stock numbers</strong>
+    <ul style="margin:6px 0 0;">
+      <li>Do not record the same top-up twice "just to be safe".</li>
+      <li>Do not type the quantity in the Remarks box — it must go in the <b>Carton qty</b> box.</li>
+      <li>Do not change the Date field unless you are back-filling yesterday's record and you are sure of the date.</li>
+      <li>Do not click <b>UPDATE</b> for a row where you did not change anything — it is skipped anyway, but it saves time.</li>
+      <li>Do not share the OPS passcode with anyone outside the team.</li>
+    </ul>
+  </div>
+
+  <h2>9. Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>What to do</th></tr>
+    <tr><td>"❌ Update failed" toast</td><td>Check your internet. Click <b>🔄 Refresh</b> on Part C. Try updating again. If it still fails, screenshot the toast and send to ADMIN.</td></tr>
+    <tr><td>Drink not in dropdown</td><td>Use <b>➕ Other / New Drink</b>, type the name, update, and tell ADMIN to add it to the master list.</td></tr>
+    <tr><td>Wrong quantity already saved</td><td>Do not try to fix it yourself. Tell ADMIN — they can edit the log entry directly.</td></tr>
+    <tr><td>Page looks blank after login</td><td>Hard-refresh with <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">R</span> (or long-press refresh on phone).</td></tr>
+    <tr><td>Forgot passcode</td><td>Contact ADMIN or your supervisor. Do not guess repeatedly.</td></tr>
+  </table>
+
+  <div class="footer-note">
+    Fridge &amp; Cage Digital Operations System — OPS Manual<br />
+    Crafted by dzul art
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MANUAL 2 — ADMIN                                             -->
+<!-- ============================================================ -->
+
+<div class="page page-break">
+  <div class="cover">
+    <h1>Fridge &amp; Cage Drink Ops</h1>
+    <p class="subtitle">Procedure Manual</p>
+    <div class="role">ADMIN</div>
+    <p class="meta">
+      Full control: edit logs, tune balances, manage drinks, backup &amp; restore<br />
+      Print or save this manual and keep it secure — it covers destructive actions.
+    </p>
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>Contents</h2>
+  <ol class="toc">
+    <li>Logging In as ADMIN</li>
+    <li>What ADMIN can do that OPS cannot</li>
+    <li>Everyday OPS tasks (quick reminder)</li>
+    <li>Editing a Log Entry</li>
+    <li>Deleting a Log Entry</li>
+    <li>Fine-Tuning a Drink Balance</li>
+    <li>Adding a New Drink to the Master List</li>
+    <li>Backup (.JSON) and Restore</li>
+    <li>Export and Print</li>
+    <li>Safety Rules for ADMIN</li>
+    <li>Troubleshooting</li>
+  </ol>
+</div>
+
+<div class="page page-break">
+  <h2>1. Logging In as ADMIN</h2>
+  <ol class="steps">
+    <li>Open the Fridge &amp; Cage Drink Ops link.</li>
+    <li>Type your <b>ADMIN</b> passcode into the password box.</li>
+    <li>Press <span class="kbd">Enter</span> or click <b>Unlock System</b>.</li>
+    <li>Confirm the badge <b>👑 ADMIN MODE</b> appears at the top right.</li>
+    <li>Confirm the <b>⚙️ ADMIN</b> tab is visible in the navigation bar. If it is missing, you logged in with the OPS passcode by mistake.</li>
+  </ol>
+
+  <div class="box danger">
+    <strong>Keep the ADMIN passcode private</strong>
+    The ADMIN passcode can delete logs and overwrite balances. Only share it with one trusted backup person. Never write it in a WhatsApp group.
+  </div>
+
+  <h2>2. What ADMIN can do that OPS cannot</h2>
+  <table>
+    <tr><th>Feature</th><th>OPS</th><th>ADMIN</th></tr>
+    <tr><td>Record Part A and Part B</td><td>✅</td><td>✅</td></tr>
+    <tr><td>View Part C and Logs</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Export CSV / Print PDF</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Edit a log entry</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Delete a log entry</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Fine-tune a drink balance</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Add a new drink to master list</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Backup / Restore (.JSON)</td><td>❌</td><td>✅</td></tr>
+  </table>
+
+  <h2>3. Everyday OPS tasks (quick reminder)</h2>
+  <p>As ADMIN you also record Part A and Part B the same way OPS does. See the <b>OPS Manual</b> sections 2 and 3 for the step-by-step. The only difference is your name in <b>Updated By</b> should be <i>Admin</i> or your real name.</p>
+</div>
+
+<div class="page page-break">
+  <h2>4. Editing a Log Entry</h2>
+  <p class="subtitle">Use when OPS recorded a wrong quantity, wrong drink, or wrong date.</p>
+
+  <ol class="steps">
+    <li>Open the <span class="screen-label">📋 LOGS</span> tab.</li>
+    <li>Use <b>Category</b>, <b>date filter</b>, or the <b>sort</b> dropdowns to find the row.</li>
+    <li>On that row, click <b>✏️ Edit</b>.</li>
+    <li>A popup opens with the current values.</li>
+    <li>Change only the field that is wrong:
+      <ul style="margin-top:4px;">
+        <li><b>Date</b> — pick the correct date.</li>
+        <li><b>Type</b> — FRIDGE TOP-UPS or CAGE.</li>
+        <li><b>Drink</b> — pick the correct drink.</li>
+        <li><b>Qty</b> — type the corrected quantity.</li>
+        <li><b>Updated By</b> — keep or change the officer name.</li>
+      </ul>
+    </li>
+    <li>Click <b>Update Log</b>.</li>
+    <li>Check the toast: <i>✅ Log updated!</i> and confirm the row now shows the new values.</li>
+  </ol>
+
+  <div class="box warn">
+    <strong>Editing does not create a new log</strong>
+    The original record is replaced. If you need an audit trail of the correction, note it in a separate system (email or notebook) before you edit.
+  </div>
+
+  <h2>5. Deleting a Log Entry</h2>
+  <ol class="steps">
+    <li>Go to the <span class="screen-label">📋 LOGS</span> tab.</li>
+    <li>Find the row you want to delete.</li>
+    <li>Click the red <b>🗑️</b> button on that row.</li>
+    <li>A browser confirm box appears — read it carefully, then click <b>OK</b>.</li>
+    <li>The toast <i>🗑️ Log deleted.</i> confirms it is gone.</li>
+  </ol>
+
+  <div class="box danger">
+    <strong>Deletion is permanent</strong>
+    Deleted logs cannot be recovered from the screen. The only safety net is your last <code>.JSON</code> backup. <b>Always download a fresh backup before any mass clean-up.</b>
+  </div>
+
+  <h2>6. Fine-Tuning a Drink Balance</h2>
+  <p class="subtitle">Use when the stored balance is wrong and a simple delivery record will not fix it (e.g. spoilage discovered, stock count correction).</p>
+
+  <ol class="steps">
+    <li>Open the <span class="screen-label">📊 PART C (BALANCE)</span> tab.</li>
+    <li>Find the drink and click <b>✏️ Edit</b> on its row.</li>
+    <li>A popup opens with the current values.</li>
+    <li>Update any of:
+      <ul style="margin-top:4px;">
+        <li><b>Drink Name</b> — only change if the name is misspelled.</li>
+        <li><b>BALANCE (CAGE)</b> — the corrected cage stock.</li>
+        <li><b>TOPPED UP (FRIDGE)</b> — the corrected fridge stock.</li>
+        <li><b>Notes / Code</b> — put the reason (e.g. "spoilt 3 cartons 25 Nov").</li>
+      </ul>
+    </li>
+    <li>Click <b>Save Balance</b>.</li>
+    <li>Check the toast <i>✅ Balance saved!</i> and confirm Part C shows the new numbers.</li>
+  </ol>
+
+  <div class="box warn">
+    <strong>Write the reason in Notes</strong>
+    A future you will look at this number and wonder why it changed. One short sentence in Notes saves an hour of guessing.
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>7. Adding a New Drink to the Master List</h2>
+  <p class="subtitle">Use when a new drink type arrives that OPS could only record as "Other / New Drink".</p>
+
+  <ol class="steps">
+    <li>Open the <span class="screen-label">⚙️ ADMIN</span> tab.</li>
+    <li>Scroll to <b>➕ Add New Drink to Master List</b>.</li>
+    <li>Fill in:
+      <ul style="margin-top:4px;">
+        <li><b>Drink Name</b> — use CAPITAL letters and the same style as existing drinks (e.g. <code>MILO CAN</code>).</li>
+        <li><b>Pack Type</b> — already fixed as <i>Carton</i>; leave it.</li>
+        <li><b>BALANCE (CAGE)</b> — starting cage stock. Use <code>0</code> if unknown.</li>
+        <li><b>Notes / Code</b> — optional, e.g. supplier code.</li>
+      </ul>
+    </li>
+    <li>Click <b>Add Drink</b>.</li>
+    <li>Check the toast <i>✅ Drink added!</i> and confirm the drink now appears in the Part A / Part B dropdowns.</li>
+  </ol>
+
+  <div class="box">
+    <strong>If the drink already exists</strong>
+    The system may reject the duplicate. Use the <b>✏️ Edit</b> button on Part C to rename or fix the existing drink instead.
+  </div>
+
+  <h2>8. Backup (.JSON) and Restore</h2>
+
+  <h3>Download a backup</h3>
+  <ol class="steps">
+    <li>Open the <span class="screen-label">⚙️ ADMIN</span> tab.</li>
+    <li>Click <b>⬇️ Download .JSON Backup</b>.</li>
+    <li>A file named like <code>dzul_art_backup_2026-11-25.json</code> downloads.</li>
+    <li>Save it somewhere safe — Google Drive, a shared folder, or email it to yourself.</li>
+  </ol>
+
+  <div class="box ok">
+    <strong>When to back up</strong>
+    Before any mass delete, before restoring anything, and at least once a week. Backups are your only recovery path.
+  </div>
+
+  <h3>Restore from a backup</h3>
+  <ol class="steps">
+    <li>Open the <span class="screen-label">⚙️ ADMIN</span> tab.</li>
+    <li>Click <b>⬆️ Restore from .JSON File</b>.</li>
+    <li>Pick the backup file from your device.</li>
+    <li>A confirm box appears — read it. It warns that current logs will be replaced.</li>
+    <li>Click <b>OK</b> only if you are sure.</li>
+    <li>Check the toast <i>✅ Backup restored!</i> and verify Part C and Logs show the old data.</li>
+  </ol>
+
+  <div class="box danger">
+    <strong>Restore replaces data</strong>
+    Restoring overwrites the current logs with whatever is in the file. If you are not sure the file is the right one, <b>download the current backup first</b> so you can roll back again.
+  </div>
+</div>
+
+<div class="page page-break">
+  <h2>9. Export and Print</h2>
+  <p>Same as OPS, with one extra option:</p>
+  <ul>
+    <li><b>📄 Export CSV</b> — full movement history as a spreadsheet.</li>
+    <li><b>🖨️ Print / Save PDF</b> — clean printout of Part C or Logs, with last-updated stamp.</li>
+  </ul>
+
+  <div class="box">
+    <strong>For reports to management</strong>
+    Use Part C print — it already includes the "as of" date and last-updated time at the top. That is enough context for a daily or weekly report.
+  </div>
+
+  <h2>10. Safety Rules for ADMIN</h2>
+  <div class="box danger">
+    <strong>Read before every destructive action</strong>
+    <ul style="margin:6px 0 0;">
+      <li><b>Back up first.</b> Before any delete, mass edit, or restore, download a fresh .JSON backup.</li>
+      <li><b>Edit, do not delete, for small mistakes.</b> Delete only for rows created by accident.</li>
+      <li><b>Never change the Date field to "today"</b> just to make a row look neat. Keep the real date so audits make sense.</li>
+      <li><b>One change per action.</b> Edit one field at a time if you are unsure, and check the toast each time.</li>
+      <li><b>Test on a slow day.</b> If you are about to restore a backup, do it when OPS is not actively recording.</li>
+      <li><b>Keep the ADMIN passcode to yourself.</b> Share the OPS passcode with the team instead.</li>
+    </ul>
+  </div>
+
+  <h2>11. Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>What to do</th></tr>
+    <tr><td>ADMIN tab not visible</td><td>You logged in with the OPS passcode. Logout and log back in with the ADMIN passcode.</td></tr>
+    <tr><td>✏️ Edit button missing on a row</td><td>Same cause — check the badge at top right. It should say <b>👑 ADMIN MODE</b>.</td></tr>
+    <tr><td>"❌ Update failed" after editing a log</td><td>Check internet. Refresh. If it persists, the record may have been deleted by another admin — reload the logs.</td></tr>
+    <tr><td>Restore says it failed</td><td>The file may be corrupt or from a different system. Open the .json in Notepad to confirm it looks like JSON, then try again.</td></tr>
+    <tr><td>Balance still looks wrong after saving</td><td>Click <b>🔄 Refresh</b> on Part C. If it still looks wrong, check Logs to see if a later Part A or Part B record overrode your correction.</td></tr>
+    <tr><td>Duplicate drink appears</td><td>Use Part C <b>✏️ Edit</b> to merge — rename one to match, or contact technical support before deleting anything.</td></tr>
+  </table>
+
+  <div class="footer-note">
+    Fridge &amp; Cage Digital Operations System — ADMIN Manual<br />
+    Crafted by dzul art
+  </div>
+</div>
+
+</body>
+</html>
