@@ -117,6 +117,14 @@
     label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
     .w-100 { width: 100%; }
 
+    .panel-subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: -8px 0 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
     .entry-row {
       display: grid; grid-template-columns: 2.2fr 1fr 1.2fr auto;
       gap: 8px; align-items: center; padding: 10px;
@@ -199,6 +207,10 @@
       footer, footer .sig {
         color: #222222 !important;
       }
+      .panel-subtitle {
+        color: #444444 !important;
+        display: block !important;
+      }
     }
   </style>
 </head>
@@ -242,14 +254,15 @@
     <div class="tabs no-print">
       <button class="tab-btn active" onclick="switchTab('partA', this)">📥 PART A (FRIDGE)</button>
       <button class="tab-btn" onclick="switchTab('partB', this)">🚚 PART B (CAGE)</button>
-      <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (FRIDGE AND CAGE BAL)</button>
+      <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (BALANCE)</button>
       <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
       <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
     </div>
 
-    <!-- PART A (FRIDGE) -->
+    <!-- PART A (FRIDGE TOP-UP) -->
     <section id="partA" class="tab-panel card">
-      <h2 style="margin-top:0;">PART A (FRIDGE)</h2>
+      <h2 style="margin-top:0;">PART A — FRIDGE TOP-UP</h2>
+      <p class="panel-subtitle">Outgoing: Cage → Fridge</p>
       <div class="grid-2">
         <div>
           <label>Date (DDD, DD MMM YYYY, HH:MM hrs)</label>
@@ -274,9 +287,10 @@
       </div>
     </section>
 
-    <!-- PART B (CAGE) -->
+    <!-- PART B (CAGE STOCK) -->
     <section id="partB" class="tab-panel card" style="display:none;">
-      <h2 style="margin-top:0;">PART B (CAGE)</h2>
+      <h2 style="margin-top:0;">PART B — CAGE STOCK</h2>
+      <p class="panel-subtitle">Incoming delivery &amp; current stock inside cage</p>
       <div class="grid-2">
         <div>
           <label>Date (DDD, DD MMM YYYY, HH:MM hrs)</label>
@@ -315,6 +329,7 @@
           <button class="btn-primary" onclick="triggerPrint('partC')">🖨️ Print / Save PDF</button>
         </div>
       </div>
+      <p class="panel-subtitle">Current stock levels</p>
       <div id="partCPrintMeta" class="print-only-meta"></div>
       <div class="table-wrap">
         <table>
@@ -495,6 +510,9 @@
 
 <div id="toast"></div>
 
+<!-- ⚠️ DO NOT rename movement_type strings ("FRIDGE TOP-UPS", "CAGE"),
+     API paths (/api/...), JSON keys, or localStorage keys (ops_*).
+     These are tied to the Cloudflare Worker + Supabase schema. -->
 <script>
   const DEFAULT_WORKER_URL = "https://drinks.dzul1234.workers.dev";
   const DEFAULT_ROW_COUNT = 10;
