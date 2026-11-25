@@ -136,6 +136,13 @@
     .tag-out { color: #60a5fa; font-weight: 700; }
     .low-stock { color: #f87171; font-weight: 700; }
 
+    .print-only-meta {
+      display: none;
+      font-size: 0.82rem;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.65);
       display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
@@ -155,6 +162,10 @@
     }
     footer .sig {
       font-weight: 800; color: var(--primary); font-style: italic;
+    }
+
+    @page {
+      margin: 12mm;
     }
 
     @media print {
@@ -178,6 +189,9 @@
       th {
         background: #eeeeee !important;
         color: #000000 !important;
+      }
+      .print-only-meta {
+        display: block !important;
       }
       .no-print, .tabs, .topbar .controls, button, #loginScreen, #toast, .modal-backdrop {
         display: none !important;
@@ -228,7 +242,7 @@
     <div class="tabs no-print">
       <button class="tab-btn active" onclick="switchTab('partA', this)">📥 PART A (FRIDGE)</button>
       <button class="tab-btn" onclick="switchTab('partB', this)">🚚 PART B (CAGE)</button>
-      <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (CURRENT FRIDGE AND CAGE BALANCE)</button>
+      <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (FRIDGE AND CAGE BAL)</button>
       <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
       <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
     </div>
@@ -255,10 +269,8 @@
 
       <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
         <button type="button" onclick="addEntryRow('fridgeRows', 'FRIDGE TOP-UPS')">+ Add Drink Row</button>
-        <button type="button" class="btn-primary" onclick="updateRecords('FRIDGE TOP-UPS')">✅ Update Records</button>
+        <button type="button" class="btn-primary" onclick="updateRecords('FRIDGE TOP-UPS')">✅ UPDATE FRIDGE</button>
         <button type="button" onclick="clearWorkingForm('FRIDGE TOP-UPS')">🧹 Clear Form</button>
-        <button type="button" onclick="copyWhatsApp('FRIDGE TOP-UPS')">💬 Copy for WhatsApp</button>
-        <button type="button" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </section>
 
@@ -284,27 +296,27 @@
 
       <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
         <button type="button" onclick="addEntryRow('cageRows', 'CAGE')">+ Add Drink Row</button>
-        <button type="button" class="btn-success" onclick="updateRecords('CAGE')">✅ Update Records</button>
+        <button type="button" class="btn-success" onclick="updateRecords('CAGE')">✅ UPDATE CAGE</button>
         <button type="button" onclick="clearWorkingForm('CAGE')">🧹 Clear Form</button>
-        <button type="button" onclick="copyWhatsApp('CAGE')">💬 Copy for WhatsApp</button>
-        <button type="button" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </section>
 
-    <!-- PART C (CURRENT FRIDGE AND CAGE BALANCE) -->
+    <!-- PART C (FRIDGE AND CAGE BAL) -->
     <section id="partC" class="tab-panel card" style="display:none;">
       <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
-        <h2 style="margin:0;">PART C (CURRENT FRIDGE AND CAGE BALANCE)</h2>
+        <h2 id="partCPrintTitle" style="margin:0;">Fridge &amp; Cage Drink Ops</h2>
         <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
           <select id="balanceSort" onchange="renderBalances()">
             <option value="AZ">Sort Drink: A–Z</option>
             <option value="ZA">Sort Drink: Z–A</option>
           </select>
           <button onclick="loadState()">🔄 Refresh</button>
+          <button onclick="copyBalanceWhatsApp()">💬 Copy for WhatsApp</button>
           <button onclick="exportCSV()">📄 Export CSV</button>
-          <button class="btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+          <button class="btn-primary" onclick="triggerPrint('partC')">🖨️ Print / Save PDF</button>
         </div>
       </div>
+      <div id="partCPrintMeta" class="print-only-meta"></div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -326,13 +338,15 @@
     <!-- LOGS TAB -->
     <section id="logsTab" class="tab-panel card" style="display:none;">
       <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
-        <h2 style="margin:0;">LOGS</h2>
+        <h2 id="logsPrintTitle" style="margin:0;">LOGS</h2>
         <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
           <select id="logTypeFilter" onchange="renderLogs()">
-            <option value="ALL">Type: All (CAGE &amp; FRIDGE TOP-UPS)</option>
-            <option value="FRIDGE TOP-UPS">FRIDGE TOP-UPS</option>
-            <option value="CAGE">CAGE</option>
+            <option value="ALL">Category: All (CAGE &amp; FRIDGE TOP-UPS)</option>
+            <option value="FRIDGE TOP-UPS">Category: FRIDGE TOP-UPS</option>
+            <option value="CAGE">Category: CAGE</option>
           </select>
+          <input type="date" id="logDateFilter" title="Filter by Date" onchange="renderLogs()" />
+          <button type="button" onclick="clearLogDateFilter()">All Dates</button>
           <select id="logDrinkSort" onchange="renderLogs()">
             <option value="NONE">Drink Order: Default</option>
             <option value="AZ">Drink: A–Z</option>
@@ -342,15 +356,17 @@
             <option value="NEW_OLD">Date: New–Old</option>
             <option value="OLD_NEW">Date: Old–New</option>
           </select>
+          <button onclick="copyLogsWhatsApp()">💬 Copy for WhatsApp</button>
           <button onclick="exportCSV()">📄 Export CSV</button>
+          <button class="btn-primary" onclick="triggerPrint('logsTab')">🖨️ Print / Save PDF</button>
         </div>
       </div>
+      <div id="logsPrintMeta" class="print-only-meta"></div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>No</th>
-              <th>Day</th>
               <th>Date / Time</th>
               <th>Type</th>
               <th>Drink Name</th>
@@ -483,6 +499,7 @@
 
 <script>
   const DEFAULT_WORKER_URL = "https://drinks.dzul1234.workers.dev";
+  const DEFAULT_ROW_COUNT = 10;
 
   let state = { role: null, drinks: [], movements: [] };
   let passcode = sessionStorage.getItem("ops_pass") || "";
@@ -514,6 +531,29 @@
     const hh = String(dateObj.getHours()).padStart(2, "0");
     const mm = String(dateObj.getMinutes()).padStart(2, "0");
     return `${ddd}, ${dd} ${mmm} ${yyyy}, ${hh}:${mm} hrs`;
+  }
+
+  function formatPrintStamp(dateInput = new Date()) {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    if (isNaN(d.getTime())) return String(dateInput || "");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mmm = MONTHS[d.getMonth()].toLowerCase();
+    const yyyy = d.getFullYear();
+    let hours = d.getHours();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const hh = String(hours).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return `${dd} ${mmm} ${yyyy}, ${hh}:${mm} ${ampm}`;
+  }
+
+  function formatAsOfDate(dateInput = new Date()) {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    if (isNaN(d.getTime())) return String(dateInput || "");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mmm = MONTHS[d.getMonth()].toLowerCase();
+    const yyyy = d.getFullYear();
+    return `${dd} ${mmm} ${yyyy}`;
   }
 
   function getISOKey(dateObj = new Date()) {
@@ -638,12 +678,49 @@
       const data = await api("/api/state");
       state.drinks = data.drinks || [];
       state.movements = data.movements || [];
+      updatePrintHeaders();
       renderBalances();
       renderLogs();
       populateEditDrinkDropdown();
     } catch (e) {
       showToast("Error loading data: " + e.message);
     }
+  }
+
+  function getLatestMovementDate() {
+    if (!state.movements || state.movements.length === 0) return new Date();
+    const latest = state.movements[0];
+    if (latest.created_at) return new Date(latest.created_at);
+    if (latest.entry_date) return new Date(latest.entry_date + "T00:00:00");
+    return new Date();
+  }
+
+  function updatePrintHeaders() {
+    const latestDate = getLatestMovementDate();
+    const asOfStr = formatAsOfDate(latestDate);
+    const titleEl = document.getElementById("partCPrintTitle");
+    if (titleEl) {
+      titleEl.textContent = `Fridge & Cage Drink Ops as of ${asOfStr}`;
+    }
+    const partCMeta = document.getElementById("partCPrintMeta");
+    if (partCMeta) {
+      partCMeta.textContent = `Last Updated: ${formatPrintStamp(latestDate)}`;
+    }
+  }
+
+  function triggerPrint(mode) {
+    const nowStamp = formatPrintStamp(new Date());
+    if (mode === "logsTab") {
+      const cat = document.getElementById("logTypeFilter")?.value || "ALL";
+      const dt = document.getElementById("logDateFilter")?.value || "All Dates";
+      const logsMeta = document.getElementById("logsPrintMeta");
+      if (logsMeta) {
+        logsMeta.textContent = `Generated: ${nowStamp} | Category: ${cat} | Date Filter: ${dt}`;
+      }
+    } else {
+      updatePrintHeaders();
+    }
+    window.print();
   }
 
   function getSortedActiveDrinks(order = "AZ") {
@@ -667,17 +744,23 @@
     return html;
   }
 
+  function makeEmptyRows(count = DEFAULT_ROW_COUNT) {
+    return Array.from({ length: count }, () => ({
+      drink_id: "",
+      custom_drink_name: "",
+      qty_text: "",
+      notes: "",
+      submitted_qty: "",
+    }));
+  }
+
   function getDraft(movementType) {
     try {
       const raw = localStorage.getItem(`ops_draft_${movementType}`);
       const parsed = raw ? JSON.parse(raw) : null;
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     } catch {}
-    return [
-      { drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" },
-      { drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" },
-      { drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" },
-    ];
+    return makeEmptyRows(DEFAULT_ROW_COUNT);
   }
 
   function saveDraft(movementType, rowsData) {
@@ -755,7 +838,7 @@
   function removeDraftRow(btn, containerId, movementType) {
     btn.closest(".entry-row").remove();
     const remaining = collectRowsFromDOM(containerId);
-    saveDraft(movementType, remaining.length ? remaining : [{ drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" }]);
+    saveDraft(movementType, remaining.length ? remaining : makeEmptyRows(DEFAULT_ROW_COUNT));
     renderWorkingRows(containerId, movementType);
   }
 
@@ -772,7 +855,7 @@
     } else {
       renderWorkingRows("cageRows", "CAGE");
     }
-    showToast("🧹 Working form cleared!");
+    showToast("🧹 Working form cleared (10 rows ready)!");
   }
 
   async function updateRecords(movementType) {
@@ -827,7 +910,7 @@
       });
       saveDraft(movementType, draft);
 
-      showToast(`✅ Updated ${itemsToSend.length} record(s)!`);
+      showToast(`✅ Updated ${itemsToSend.length} record(s) for ${isFridge ? "FRIDGE" : "CAGE"}!`);
       await loadState();
       renderWorkingRows(containerId, movementType);
     } catch (e) {
@@ -835,34 +918,69 @@
     }
   }
 
-  function copyWhatsApp(movementType) {
-    const isFridge = movementType === "FRIDGE TOP-UPS";
-    const containerId = isFridge ? "fridgeRows" : "cageRows";
-    const dtLabel = document.getElementById(isFridge ? "fridgeDateTime" : "cageDateTime").value.trim();
-    const officer = document.getElementById(isFridge ? "fridgeOfficer" : "cageOfficer").value;
-    const rows = document.querySelectorAll(`#${containerId} .entry-row`);
+  function copyBalanceWhatsApp() {
+    const order = document.getElementById("balanceSort")?.value || "AZ";
+    const list = getSortedActiveDrinks(order);
+    if (!list.length) return showToast("⚠️ No balance items to copy.");
+    const lines = [
+      `*${document.getElementById("partCPrintTitle")?.textContent || "Fridge & Cage Balance"}*`,
+      ``,
+      ...list.map((d, i) => `${i + 1}. ${d.name} — Cage: ${d.cage_qty} | Fridge: ${d.fridge_qty} Carton`),
+    ];
+    navigator.clipboard.writeText(lines.join("\n"));
+    showToast("💬 Copied Balance summary for WhatsApp!");
+  }
 
-    const lines = [`*${movementType}*`, `Date/Time: ${dtLabel}`, `By: ${officer}`, ``];
-    let count = 0;
-    rows.forEach((r) => {
-      const sel = r.querySelector(".drink-select");
-      const qty = r.querySelector(".qty-input").value.trim();
-      if (sel.value && qty) {
-        count++;
-        const name =
-          sel.value === "__NEW__"
-            ? r.querySelector(".custom-drink-input").value.trim().toUpperCase()
-            : sel.options[sel.selectedIndex].text.split(" [")[0];
-        lines.push(`${count}. ${name} — ${qty} Carton`);
-      }
+  function getFilteredSortedLogs() {
+    const typeFilter = document.getElementById("logTypeFilter")?.value || "ALL";
+    const dateFilter = document.getElementById("logDateFilter")?.value || "";
+    const drinkSort = document.getElementById("logDrinkSort")?.value || "NONE";
+    const dateSort = document.getElementById("logDateSort")?.value || "NEW_OLD";
+
+    let list = (state.movements || []).filter((m) => {
+      const norm = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN" ? "CAGE" : "FRIDGE TOP-UPS";
+      const matchType = typeFilter === "ALL" || norm === typeFilter;
+      const matchDate = !dateFilter || String(m.entry_date || "") === dateFilter;
+      return matchType && matchDate;
     });
 
-    if (count === 0) {
-      showToast("⚠️ Nothing to copy yet.");
-      return;
-    }
+    return list.slice().sort((a, b) => {
+      const nameA = String(a.drink_name || "");
+      const nameB = String(b.drink_name || "");
+      if (drinkSort === "AZ") {
+        const c = nameA.localeCompare(nameB, undefined, { sensitivity: "base" });
+        if (c !== 0) return c;
+      } else if (drinkSort === "ZA") {
+        const c = nameB.localeCompare(nameA, undefined, { sensitivity: "base" });
+        if (c !== 0) return c;
+      }
+      const dateA = String(a.entry_date || "");
+      const dateB = String(b.entry_date || "");
+      const dateCmp = dateA.localeCompare(dateB);
+      if (dateCmp !== 0) return dateSort === "OLD_NEW" ? dateCmp : -dateCmp;
+      return dateSort === "OLD_NEW" ? Number(a.id || 0) - Number(b.id || 0) : Number(b.id || 0) - Number(a.id || 0);
+    });
+  }
+
+  function clearLogDateFilter() {
+    const el = document.getElementById("logDateFilter");
+    if (el) el.value = "";
+    renderLogs();
+  }
+
+  function copyLogsWhatsApp() {
+    const list = getFilteredSortedLogs();
+    if (!list.length) return showToast("⚠️ No logs matching filter to copy.");
+    const lines = [
+      `*LOGS (${document.getElementById("logTypeFilter")?.value || "ALL"})*`,
+      ``,
+      ...list.map((m, i) => {
+        const isCage = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN";
+        return `${i + 1}. [${isCage ? "CAGE" : "FRIDGE TOP-UPS"}] ${m.drink_name} — ${m.qty_text} Carton (${m.entry_datetime_label || m.entry_date}, By: ${m.officer})`;
+      }),
+    ];
     navigator.clipboard.writeText(lines.join("\n"));
-    showToast("💬 Copied WhatsApp summary!");
+    showToast("💬 Copied Logs summary for WhatsApp!");
   }
 
   function renderBalances() {
@@ -871,13 +989,7 @@
     tbody.innerHTML = "";
     const isAdmin = state.role === "ADMIN";
 
-    const list = state.drinks
-      .filter((d) => d.is_active !== false)
-      .slice()
-      .sort((a, b) => {
-        const cmp = a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-        return order === "ZA" ? -cmp : cmp;
-      });
+    const list = getSortedActiveDrinks(order);
 
     list.forEach((d, idx) => {
       const cageClass = Number(d.cage_qty) <= 1 ? "low-stock" : "";
@@ -898,39 +1010,15 @@
   }
 
   function renderLogs() {
-    const typeFilter = document.getElementById("logTypeFilter")?.value || "ALL";
-    const drinkSort = document.getElementById("logDrinkSort")?.value || "NONE";
-    const dateSort = document.getElementById("logDateSort")?.value || "NEW_OLD";
     const tbody = document.getElementById("logsTableBody");
     if (!tbody) return;
     tbody.innerHTML = "";
     const isAdmin = state.role === "ADMIN";
-
-    let list = (state.movements || []).filter((m) => {
-      const norm = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN" ? "CAGE" : "FRIDGE TOP-UPS";
-      return typeFilter === "ALL" || norm === typeFilter;
-    });
-
-    list = list.slice().sort((a, b) => {
-      const nameA = String(a.drink_name || "");
-      const nameB = String(b.drink_name || "");
-      if (drinkSort === "AZ") {
-        const c = nameA.localeCompare(nameB, undefined, { sensitivity: "base" });
-        if (c !== 0) return c;
-      } else if (drinkSort === "ZA") {
-        const c = nameB.localeCompare(nameA, undefined, { sensitivity: "base" });
-        if (c !== 0) return c;
-      }
-      const dateA = String(a.entry_date || "");
-      const dateB = String(b.entry_date || "");
-      const dateCmp = dateA.localeCompare(dateB);
-      if (dateCmp !== 0) return dateSort === "OLD_NEW" ? dateCmp : -dateCmp;
-      return dateSort === "OLD_NEW" ? Number(a.id || 0) - Number(b.id || 0) : Number(b.id || 0) - Number(a.id || 0);
-    });
+    const list = getFilteredSortedLogs();
 
     if (list.length === 0) {
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="${isAdmin ? 8 : 7}" style="text-align:center; color:var(--muted); padding:16px;">No log records yet. Enter a drink &amp; qty in PART A or PART B and tap Update Records.</td>`;
+      tr.innerHTML = `<td colspan="${isAdmin ? 7 : 6}" style="text-align:center; color:var(--muted); padding:16px;">No log records match the current filter.</td>`;
       tbody.appendChild(tr);
       return;
     }
@@ -938,15 +1026,11 @@
     list.forEach((m, idx) => {
       const isCage = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN";
       const displayType = isCage ? "CAGE" : "FRIDGE TOP-UPS";
-      const shortDay = SHORT_DAYS.includes(m.day_name)
-        ? m.day_name
-        : extractDayAndISODate(`${m.day_name || ""}, ${m.entry_date || ""}`).day;
       const displayDate = m.entry_datetime_label || m.entry_date || "-";
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${idx + 1}</td>
-        <td>${shortDay}</td>
         <td>${displayDate}</td>
         <td class="${isCage ? "tag-in" : "tag-out"}">${displayType}</td>
         <td><b>${m.drink_name || "-"}</b></td>
@@ -1084,10 +1168,9 @@
   }
 
   function exportCSV() {
-    const headers = ["No", "Day", "Date/Time", "Type", "Drink Name", "Qty", "Pack Type", "By", "Notes"];
+    const headers = ["No", "Date/Time", "Type", "Drink Name", "Qty", "Pack Type", "By", "Notes"];
     const rows = state.movements.map((m, i) => [
       i + 1,
-      m.day_name,
       `"${(m.entry_datetime_label || m.entry_date).replace(/"/g, '""')}"`,
       m.movement_type,
       `"${m.drink_name.replace(/"/g, '""')}"`,
