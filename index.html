@@ -311,7 +311,6 @@
             <option value="ZA">Sort Drink: Z–A</option>
           </select>
           <button onclick="loadState()">🔄 Refresh</button>
-          <button onclick="copyBalanceWhatsApp()">💬 Copy for WhatsApp</button>
           <button onclick="exportCSV()">📄 Export CSV</button>
           <button class="btn-primary" onclick="triggerPrint('partC')">🖨️ Print / Save PDF</button>
         </div>
@@ -356,7 +355,6 @@
             <option value="NEW_OLD">Date: New–Old</option>
             <option value="OLD_NEW">Date: Old–New</option>
           </select>
-          <button onclick="copyLogsWhatsApp()">💬 Copy for WhatsApp</button>
           <button onclick="exportCSV()">📄 Export CSV</button>
           <button class="btn-primary" onclick="triggerPrint('logsTab')">🖨️ Print / Save PDF</button>
         </div>
@@ -537,7 +535,7 @@
     const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
     if (isNaN(d.getTime())) return String(dateInput || "");
     const dd = String(d.getDate()).padStart(2, "0");
-    const mmm = MONTHS[d.getMonth()].toLowerCase();
+    const mmm = MONTHS[d.getMonth()];
     const yyyy = d.getFullYear();
     let hours = d.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -551,7 +549,7 @@
     const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
     if (isNaN(d.getTime())) return String(dateInput || "");
     const dd = String(d.getDate()).padStart(2, "0");
-    const mmm = MONTHS[d.getMonth()].toLowerCase();
+    const mmm = MONTHS[d.getMonth()];
     const yyyy = d.getFullYear();
     return `${dd} ${mmm} ${yyyy}`;
   }
@@ -918,19 +916,6 @@
     }
   }
 
-  function copyBalanceWhatsApp() {
-    const order = document.getElementById("balanceSort")?.value || "AZ";
-    const list = getSortedActiveDrinks(order);
-    if (!list.length) return showToast("⚠️ No balance items to copy.");
-    const lines = [
-      `*${document.getElementById("partCPrintTitle")?.textContent || "Fridge & Cage Balance"}*`,
-      ``,
-      ...list.map((d, i) => `${i + 1}. ${d.name} — Cage: ${d.cage_qty} | Fridge: ${d.fridge_qty} Carton`),
-    ];
-    navigator.clipboard.writeText(lines.join("\n"));
-    showToast("💬 Copied Balance summary for WhatsApp!");
-  }
-
   function getFilteredSortedLogs() {
     const typeFilter = document.getElementById("logTypeFilter")?.value || "ALL";
     const dateFilter = document.getElementById("logDateFilter")?.value || "";
@@ -966,21 +951,6 @@
     const el = document.getElementById("logDateFilter");
     if (el) el.value = "";
     renderLogs();
-  }
-
-  function copyLogsWhatsApp() {
-    const list = getFilteredSortedLogs();
-    if (!list.length) return showToast("⚠️ No logs matching filter to copy.");
-    const lines = [
-      `*LOGS (${document.getElementById("logTypeFilter")?.value || "ALL"})*`,
-      ``,
-      ...list.map((m, i) => {
-        const isCage = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN";
-        return `${i + 1}. [${isCage ? "CAGE" : "FRIDGE TOP-UPS"}] ${m.drink_name} — ${m.qty_text} Carton (${m.entry_datetime_label || m.entry_date}, By: ${m.officer})`;
-      }),
-    ];
-    navigator.clipboard.writeText(lines.join("\n"));
-    showToast("💬 Copied Logs summary for WhatsApp!");
   }
 
   function renderBalances() {
