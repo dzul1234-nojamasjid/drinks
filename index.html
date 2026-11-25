@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dim">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fridge & Cage Drink Ops</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-2: #eef2f6;
+      --text: #18202c;
+      --muted: #5b6777;
+      --border: #d5dce4;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    [data-theme="dim"] {
+      --bg: #1e242d;
+      --surface: #272f3b;
+      --surface-2: #313b4a;
+      --text: #e6ecf5;
+      --muted: #9aa7b8;
+      --border: #3d4859;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 4px 14px rgba(0,0,0,0.25);
+    }
+    [data-theme="dark"] {
+      --bg: #0c0f14;
+      --surface: #151a22;
+      --surface-2: #1e2530;
+      --text: #f1f5f9;
+      --muted: #8b98a9;
+      --border: #2a3342;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #f87171;
+      --shadow: 0 4px 18px rgba(0,0,0,0.5);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      transition: background 0.2s, color 0.2s;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 14px; }
+
+    /* Top Bar */
+    .topbar {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      align-items: center; justify-content: space-between;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .brand h1 { margin: 0; font-size: 1.15rem; }
+    .brand small { color: var(--muted); font-size: 0.8rem; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    .badge {
+      padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+      background: var(--surface-2); border: 1px solid var(--border);
+    }
+    .badge.admin { color: var(--warning); border-color: var(--warning); }
+    .badge.ops { color: var(--success); border-color: var(--success); }
+
+    button, select, input {
+      font: inherit; color: var(--text); background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px 11px;
+    }
+    input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+    button { cursor: pointer; font-weight: 600; transition: 0.15s; }
+    button:hover { opacity: 0.92; }
+    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+    .btn-warning { background: var(--warning); color: #111; border-color: var(--warning); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-sm { padding: 5px 9px; font-size: 0.82rem; }
+
+    /* Theme Switcher */
+    .theme-group { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .theme-group button { border: none; border-radius: 0; padding: 6px 10px; font-size: 0.8rem; }
+    .theme-group button.active { background: var(--primary); color: #fff; }
+
+    /* Cards & Tabs */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .tab-btn { flex: 1 1 140px; text-align: center; padding: 10px; background: var(--surface); }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Forms */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 12px; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    .w-100 { width: 100%; }
+
+    /* Entry Rows */
+    .entry-row {
+      display: grid; grid-template-columns: 2fr 1fr 1.2fr auto;
+      gap: 8px; align-items: center; padding: 10px;
+      background: var(--surface-2); border-radius: 10px; margin-bottom: 8px;
+    }
+    @media (max-width: 680px) {
+      .entry-row { grid-template-columns: 1fr 1fr; }
+      .entry-row .drink-col { grid-column: 1 / -1; }
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: var(--surface-2); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+    .tag-in { color: var(--success); font-weight: 700; }
+    .tag-out { color: var(--primary); font-weight: 700; }
+    .low-stock { color: var(--danger); font-weight: 700; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: 100%; max-width: 480px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 20px; right: 20px; background: var(--surface);
+      border: 1px solid var(--primary); padding: 10px 16px; border-radius: 10px;
+      box-shadow: var(--shadow); display: none; z-index: 99; font-weight: 600;
+    }
+
+    /* Footer Signature */
+    footer {
+      text-align: center; padding: 20px 10px 28px; color: var(--muted);
+      font-size: 0.85rem; letter-spacing: 0.04em;
+    }
+    footer .sig {
+      font-weight: 800; color: var(--primary); font-style: italic;
+    }
+
+    /* Print / PDF Styling */
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .no-print, .tabs, .topbar .controls, button, #loginScreen { display: none !important; }
+      .card { box-shadow: none !important; border: 1px solid #000 !important; }
+      th, td { border: 1px solid #000 !important; color: #000 !important; }
+      footer { color: #333 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- TOP HEADER -->
+  <div class="topbar">
+    <div class="brand">
+      <h1>🧊 Fridge & Cage Drink Ops</h1>
+      <small>TO: OPERATIONS TEAM — Digital Top-Up & Cage Tracker</small>
+    </div>
+    <div class="controls">
+      <div class="theme-group" title="Switch Display Mode">
+        <button type="button" data-set-theme="light" onclick="setTheme('light')">☀️ Light</button>
+        <button type="button" data-set-theme="dim" onclick="setTheme('dim')">🌗 Dim</button>
+        <button type="button" data-set-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+      </div>
+      <span id="roleBadge" class="badge" style="display:none;"></span>
+      <button id="logoutBtn" class="btn-sm no-print" style="display:none;" onclick="logout()">Lock / Exit</button>
+    </div>
+  </div>
+
+  <!-- LOGIN SCREEN (Password Only — No Username) -->
+  <div id="loginScreen" class="card" style="max-width: 420px; margin: 40px auto;">
+    <h2 style="margin-top:0;">🔐 Enter Access Passcode</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-top:-6px;">
+      Key in your <b>OPS</b> or <b>ADMIN</b> passcode to unlock.
+    </p>
+    <div style="margin-bottom:12px;">
+      <label>Cloudflare Worker URL</label>
+      <input type="url" id="workerUrlInput" class="w-100" placeholder="https://your-worker.yourname.workers.dev" />
+    </div>
+    <div style="margin-bottom:14px;">
+      <label>Passcode (OPS or ADMIN)</label>
+      <input type="password" id="passcodeInput" class="w-100" placeholder="Enter passcode..." onkeydown="if(event.key==='Enter') login()" />
+    </div>
+    <button class="btn-primary w-100" onclick="login()">Unlock System</button>
+    <p id="loginError" style="color:var(--danger); font-size:0.85rem; margin-bottom:0;"></p>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="appScreen" style="display:none;">
+    <!-- NAVIGATION TABS -->
+    <div class="tabs no-print">
+      <button class="tab-btn active" onclick="switchTab('partA', this)">📥 Part A: Top-Up (Cage → Fridge)</button>
+      <button class="tab-btn" onclick="switchTab('partB', this)">🚚 Part B: Stock In (Delivery → Cage)</button>
+      <button class="tab-btn" onclick="switchTab('partC', this)">📊 Part C: Cage & Fridge + Logs</button>
+      <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ Admin: Drinks & Backup</button>
+    </div>
+
+    <!-- PART A: FRIDGE TOP-UP (CAGE -> FRIDGE) -->
+    <section id="partA" class="tab-panel card">
+      <h2 style="margin-top:0;">Part A: Fridge Drink Top-Up (Take from Cage → Put in Fridge)</h2>
+      <div class="grid-4">
+        <div>
+          <label>Date</label>
+          <input type="date" id="topupDate" class="w-100" onchange="syncDayName('topupDate','topupDay')" />
+        </div>
+        <div>
+          <label>Day</label>
+          <input type="text" id="topupDay" class="w-100" readonly />
+        </div>
+        <div>
+          <label>Shift</label>
+          <select id="topupShift" class="w-100">
+            <option value="AM">AM Shift</option>
+            <option value="PM" selected>PM Shift</option>
+            <option value="Weekend">Weekend</option>
+            <option value="Ad-hoc">Ad-hoc</option>
+          </select>
+        </div>
+        <div>
+          <label>Officer ID / Name</label>
+          <select id="topupOfficer" class="w-100">
+            <option value="Iral (pm)">Iral (pm)</option>
+            <option value="Dzul">Dzul</option>
+            <option value="Ops Team">Ops Team</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="topupRows"></div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+        <button type="button" onclick="addEntryRow('topupRows')">+ Add Another Drink Row</button>
+        <button type="button" class="btn-primary" onclick="submitBatch('TOP_UP')">💾 Save Fridge Top-Up</button>
+        <button type="button" onclick="copyChatSummary('TOP_UP')">📋 Copy Summary for WhatsApp/Chat</button>
+      </div>
+    </section>
+
+    <!-- PART B: NEW STOCK ARRIVAL (DELIVERY -> CAGE) -->
+    <section id="partB" class="tab-panel card" style="display:none;">
+      <h2 style="margin-top:0;">Part B: New Stock Arrival (Delivery → Put Inside Cage)</h2>
+      <div class="grid-4">
+        <div>
+          <label>Arrival Date</label>
+          <input type="date" id="stockinDate" class="w-100" onchange="syncDayName('stockinDate','stockinDay')" />
+        </div>
+        <div>
+          <label>Day</label>
+          <input type="text" id="stockinDay" class="w-100" readonly />
+        </div>
+        <div>
+          <label>Shift / Session</label>
+          <select id="stockinShift" class="w-100">
+            <option value="AM">AM Delivery</option>
+            <option value="PM" selected>PM Delivery</option>
+            <option value="Weekend">Weekend Delivery</option>
+          </select>
+        </div>
+        <div>
+          <label>Checked By (Officer)</label>
+          <select id="stockinOfficer" class="w-100">
+            <option value="Iral (pm)">Iral (pm)</option>
+            <option value="Dzul">Dzul</option>
+            <option value="Ops Team">Ops Team</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="stockinRows"></div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+        <button type="button" onclick="addEntryRow('stockinRows')">+ Add Another Drink Row</button>
+        <button type="button" class="btn-success" onclick="submitBatch('STOCK_IN')">🚚 Save Cage Stock-In</button>
+      </div>
+    </section>
+
+    <!-- PART C: CAGE & FRIDGE SNAPSHOT + HISTORY + EXPORTS -->
+    <section id="partC" class="tab-panel" style="display:none;">
+      <div class="card">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+          <h2 style="margin:0;">Part C: Current Cage & Fridge Balance</h2>
+          <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+            <button onclick="loadState()">🔄 Refresh</button>
+            <button onclick="exportCSV()">📄 Export CSV</button>
+            <button class="btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Drink Name</th>
+                <th>Pack Type</th>
+                <th>Inside Cage Left</th>
+                <th>Fridge Topped Up</th>
+                <th>Notes / Code</th>
+              </tr>
+            </thead>
+            <tbody id="balanceTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+          <h2 style="margin:0;">📋 Movement History Log (Top-Ups & Deliveries)</h2>
+          <select id="filterType" class="no-print" onchange="renderHistory()">
+            <option value="ALL">Show All Movements</option>
+            <option value="TOP_UP">Part A: Fridge Top-Ups Only</option>
+            <option value="STOCK_IN">Part B: Cage Stock-Ins Only</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Day</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Drinks Type</th>
+                <th>Qty / Cartons</th>
+                <th>Officer</th>
+                <th class="no-print admin-col" style="display:none;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB: MANAGE DRINKS + JSON BACKUP / RESTORE -->
+    <section id="adminTab" class="tab-panel" style="display:none;">
+      <div class="card">
+        <h2 style="margin-top:0;">💾 Full System Backup & Restore (.JSON)</h2>
+        <p style="color:var(--muted); font-size:0.88rem;">
+          Download a complete <code>.json</code> snapshot of all drinks and logs, or restore from a previous backup file.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <button class="btn-primary" onclick="downloadBackupJSON()">⬇️ Download .JSON Backup</button>
+          <label class="btn-warning" style="padding:8px 12px; border-radius:8px; cursor:pointer; color:#111; margin:0;">
+            ⬆️ Restore from .JSON File
+            <input type="file" accept=".json" style="display:none;" onchange="restoreBackupJSON(event)" />
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">➕ Add / Update Master Drink</h2>
+        <div class="grid-4">
+          <div>
+            <label>Drink Name</label>
+            <input type="text" id="newDrinkName" class="w-100" placeholder="e.g. Milo Can 240ml" />
+          </div>
+          <div>
+            <label>Pack Unit</label>
+            <select id="newDrinkUnit" class="w-100">
+              <option value="carton">Carton</option>
+              <option value="box">Box</option>
+              <option value="stack">Stack</option>
+            </select>
+          </div>
+          <div>
+            <label>Units per Pack</label>
+            <input type="number" id="newDrinkPerPack" class="w-100" value="24" min="1" />
+          </div>
+          <div>
+            <label>Current Cage Qty</label>
+            <input type="number" id="newDrinkCageQty" class="w-100" value="0" min="0" />
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <label>Notes / Batch Code</label>
+          <input type="text" id="newDrinkNotes" class="w-100" placeholder="e.g. x 24 cans | Code: 14999B" />
+        </div>
+        <button class="btn-success" onclick="saveMasterDrink()">Save Drink to Master List</button>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Fridge &amp; Cage Digital Operations System &bull; Crafted by <span class="sig">dzul art</span>
+  </footer>
+</div>
+
+<!-- EDIT / MODIFY MODAL (ADMIN) -->
+<div id="editModal" class="modal-backdrop">
+  <div class="modal">
+    <h3 style="margin-top:0;">✏️ Edit / Modify Record</h3>
+    <input type="hidden" id="editId" />
+    <div style="margin-bottom:10px;">
+      <label>Date</label>
+      <input type="date" id="editDate" class="w-100" />
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Movement Type</label>
+      <select id="editType" class="w-100">
+        <option value="TOP_UP">Part A: Fridge Top-Up</option>
+        <option value="STOCK_IN">Part B: Cage Stock-In</option>
+      </select>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Drink</label>
+      <select id="editDrink" class="w-100"></select>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Quantity (e.g. 1, 2, 12x2)</label>
+      <input type="text" id="editQty" class="w-100" />
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Shift</label>
+      <select id="editShift" class="w-100">
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+        <option value="Weekend">Weekend</option>
+        <option value="Ad-hoc">Ad-hoc</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label>Officer</label>
+      <input type="text" id="editOfficer" class="w-100" />
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button onclick="closeEditModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitEdit()">Update Record</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // Replace with your live Cloudflare Worker URL if you want it pre-filled
+  const DEFAULT_WORKER_URL = "https://your-worker.yourname.workers.dev";
+
+  let state = { role: null, drinks: [], movements: [] };
+  let passcode = sessionStorage.getItem("ops_pass") || "";
+  let workerUrl = localStorage.getItem("ops_worker_url") || DEFAULT_WORKER_URL;
+
+  const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => (t.style.display = "none"), 2800);
+  }
+
+  // Theme handling (Light / Dim / Dark)
+  function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("ops_theme", theme);
+    document.querySelectorAll("[data-set-theme]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.setTheme === theme);
+    });
+  }
+
+  function initDates() {
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("topupDate").value = today;
+    document.getElementById("stockinDate").value = today;
+    syncDayName("topupDate", "topupDay");
+    syncDayName("stockinDate", "stockinDay");
+  }
+
+  function syncDayName(dateInputId, dayInputId) {
+    const val = document.getElementById(dateInputId).value;
+    if (!val) return;
+    const d = new Date(val + "T00:00:00");
+    document.getElementById(dayInputId).value = DAYS[d.getDay()];
+  }
+
+  async function api(path, options = {}) {
+    const cleanBase = workerUrl.replace(/\/+$/, "");
+    const res = await fetch(`${cleanBase}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "X-App-Password": passcode,
+        ...(options.headers || {}),
+      },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Request failed");
+    return data;
+  }
+
+  async function login() {
+    const urlInput = document.getElementById("workerUrlInput").value.trim();
+    const passInput = document.getElementById("passcodeInput").value.trim();
+    const errEl = document.getElementById("loginError");
+    errEl.textContent = "";
+
+    if (!urlInput || !passInput) {
+      errEl.textContent = "Please enter both Worker URL and Passcode.";
+      return;
+    }
+
+    workerUrl = urlInput;
+    passcode = passInput;
+
+    try {
+      const res = await api("/api/login", { method: "POST" });
+      localStorage.setItem("ops_worker_url", workerUrl);
+      sessionStorage.setItem("ops_pass", passcode);
+      state.role = res.role;
+      enterApp();
+    } catch (e) {
+      errEl.textContent = "❌ " + e.message;
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem("ops_pass");
+    passcode = "";
+    state.role = null;
+    document.getElementById("appScreen").style.display = "none";
+    document.getElementById("loginScreen").style.display = "block";
+    document.getElementById("roleBadge").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "none";
+  }
+
+  async function enterApp() {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("appScreen").style.display = "block";
+
+    const badge = document.getElementById("roleBadge");
+    badge.style.display = "inline-block";
+    badge.textContent = state.role === "ADMIN" ? "👑 ADMIN MODE" : "👷 OPS MODE";
+    badge.className = "badge " + (state.role === "ADMIN" ? "admin" : "ops");
+    document.getElementById("logoutBtn").style.display = "inline-block";
+
+    const isAdmin = state.role === "ADMIN";
+    document.getElementById("adminTabBtn").style.display = isAdmin ? "inline-block" : "none";
+    document.querySelectorAll(".admin-col").forEach((el) => {
+      el.style.display = isAdmin ? "table-cell" : "none";
+    });
+
+    await loadState();
+    resetEntryRows();
+  }
+
+  async function loadState() {
+    try {
+      const data = await api("/api/state");
+      state.drinks = data.drinks || [];
+      state.movements = data.movements || [];
+      renderBalances();
+      renderHistory();
+      populateEditDrinkDropdown();
+    } catch (e) {
+      showToast("Error loading data: " + e.message);
+    }
+  }
+
+  function buildDrinkOptionsHTML() {
+    const activeDrinks = state.drinks.filter((d) => d.is_active !== false);
+    let html = `<option value="">-- Select Drink --</option>`;
+    for (const d of activeDrinks) {
+      html += `<option value="${d.id}">${d.name} [${d.pack_unit} | Cage: ${d.cage_qty}]</option>`;
+    }
+    html += `<option value="__NEW__">➕ Other / New Drink (Type Name)</option>`;
+    return html;
+  }
+
+  function addEntryRow(containerId) {
+    const container = document.getElementById(containerId);
+    const row = document.createElement("div");
+    row.className = "entry-row";
+    row.innerHTML = `
+      <div class="drink-col">
+        <select class="w-100 drink-select" onchange="toggleCustomDrink(this)">
+          ${buildDrinkOptionsHTML()}
+        </select>
+        <input type="text" class="w-100 custom-drink-input" placeholder="Type new drink name..." style="display:none; margin-top:6px;" />
+      </div>
+      <div>
+        <input type="text" class="w-100 qty-input" placeholder="Qty (e.g. 1 or 12x2)" />
+      </div>
+      <div>
+        <input type="text" class="w-100 note-input" placeholder="Remarks (optional)" />
+      </div>
+      <div>
+        <button type="button" class="btn-danger btn-sm" onclick="this.closest('.entry-row').remove()">✕</button>
+      </div>
+    `;
+    container.appendChild(row);
+  }
+
+  function toggleCustomDrink(selectEl) {
+    const customInput = selectEl.parentElement.querySelector(".custom-drink-input");
+    customInput.style.display = selectEl.value === "__NEW__" ? "block" : "none";
+  }
+
+  function resetEntryRows() {
+    ["topupRows", "stockinRows"].forEach((id) => {
+      const el = document.getElementById(id);
+      el.innerHTML = "";
+      addEntryRow(id);
+      addEntryRow(id);
+      addEntryRow(id);
+    });
+  }
+
+  async function submitBatch(movementType) {
+    const isTopUp = movementType === "TOP_UP";
+    const containerId = isTopUp ? "topupRows" : "stockinRows";
+    const entry_date = document.getElementById(isTopUp ? "topupDate" : "stockinDate").value;
+    const day_name = document.getElementById(isTopUp ? "topupDay" : "stockinDay").value;
+    const shift = document.getElementById(isTopUp ? "topupShift" : "stockinShift").value;
+    const officer = document.getElementById(isTopUp ? "topupOfficer" : "stockinOfficer").value;
+
+    const rows = document.querySelectorAll(`#${containerId} .entry-row`);
+    const items = [];
+
+    rows.forEach((r) => {
+      const drink_id = r.querySelector(".drink-select").value;
+      const custom_drink_name = r.querySelector(".custom-drink-input").value.trim();
+      const qty_text = r.querySelector(".qty-input").value.trim();
+      const notes = r.querySelector(".note-input").value.trim();
+      if (drink_id && qty_text) {
+        items.push({
+          entry_date,
+          day_name,
+          shift,
+          movement_type: movementType,
+          drink_id,
+          custom_drink_name,
+          qty_text,
+          officer,
+          notes,
+        });
+      }
+    });
+
+    if (items.length === 0) {
+      showToast("⚠️ Please select at least one drink and quantity.");
+      return;
+    }
+
+    try {
+      await api("/api/movements", {
+        method: "POST",
+        body: JSON.stringify({ items }),
+      });
+      showToast(`✅ Saved ${items.length} record(s)!`);
+      await loadState();
+      resetEntryRows();
+    } catch (e) {
+      showToast("❌ Save failed: " + e.message);
+    }
+  }
+
+  function copyChatSummary(movementType) {
+    const date = document.getElementById("topupDate").value;
+    const day = document.getElementById("topupDay").value;
+    const shift = document.getElementById("topupShift").value;
+    const officer = document.getElementById("topupOfficer").value;
+    const rows = document.querySelectorAll("#topupRows .entry-row");
+
+    let lines = [`*FRIDGE DRINK TOP UP LIST*`, `Date: ${day}, ${date} (${shift})`, `Officer: ${officer}`, ``];
+    let count = 0;
+    rows.forEach((r) => {
+      const sel = r.querySelector(".drink-select");
+      const qty = r.querySelector(".qty-input").value.trim();
+      if (sel.value && qty) {
+        count++;
+        const name =
+          sel.value === "__NEW__"
+            ? r.querySelector(".custom-drink-input").value.trim()
+            : sel.options[sel.selectedIndex].text.split(" [")[0];
+        lines.push(`${count}. ${name} — ${qty}`);
+      }
+    });
+
+    if (count === 0) {
+      showToast("⚠️ Fill in drinks first before copying.");
+      return;
+    }
+    navigator.clipboard.writeText(lines.join("\n"));
+    showToast("📋 Copied summary to clipboard!");
+  }
+
+  function renderBalances() {
+    const tbody = document.getElementById("balanceTableBody");
+    tbody.innerHTML = "";
+    state.drinks.forEach((d, idx) => {
+      const cageClass = Number(d.cage_qty) <= 1 ? "low-stock" : "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td><b>${d.name}</b> ${d.is_new ? '<span class="badge">NEW</span>' : ""}</td>
+        <td>${d.pack_unit}</td>
+        <td class="${cageClass}">${d.cage_qty} ${d.pack_unit}(s)</td>
+        <td>${d.fridge_qty} ${d.pack_unit}(s)</td>
+        <td style="color:var(--muted);">${d.notes || "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderHistory() {
+    const filter = document.getElementById("filterType").value;
+    const tbody = document.getElementById("historyTableBody");
+    tbody.innerHTML = "";
+    const isAdmin = state.role === "ADMIN";
+
+    const filtered = state.movements.filter((m) => filter === "ALL" || m.movement_type === filter);
+    filtered.forEach((m, idx) => {
+      const isStockIn = m.movement_type === "STOCK_IN";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${m.day_name}</td>
+        <td>${m.entry_date}</td>
+        <td class="${isStockIn ? "tag-in" : "tag-out"}">${isStockIn ? "STOCK IN (Cage)" : "TOP UP (Fridge)"}</td>
+        <td>${m.drink_name}</td>
+        <td><b>${m.qty_text}</b> (${m.pack_unit})</td>
+        <td>${m.officer} (${m.shift})</td>
+        <td class="no-print" style="display:${isAdmin ? "table-cell" : "none"};">
+          <button class="btn-sm" onclick="openEditModal(${m.id})">✏️ Edit</button>
+          <button class="btn-sm btn-danger" onclick="deleteMovement(${m.id})">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Admin Edit / Update / Delete
+  function populateEditDrinkDropdown() {
+    const sel = document.getElementById("editDrink");
+    sel.innerHTML = state.drinks.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
+  }
+
+  function openEditModal(id) {
+    const rec = state.movements.find((m) => m.id === id);
+    if (!rec) return;
+    document.getElementById("editId").value = rec.id;
+    document.getElementById("editDate").value = rec.entry_date;
+    document.getElementById("editType").value = rec.movement_type;
+    document.getElementById("editDrink").value = rec.drink_id;
+    document.getElementById("editQty").value = rec.qty_text;
+    document.getElementById("editShift").value = rec.shift;
+    document.getElementById("editOfficer").value = rec.officer;
+    document.getElementById("editModal").classList.add("open");
+  }
+
+  function closeEditModal() {
+    document.getElementById("editModal").classList.remove("open");
+  }
+
+  async function submitEdit() {
+    const id = document.getElementById("editId").value;
+    const entry_date = document.getElementById("editDate").value;
+    const d = new Date(entry_date + "T00:00:00");
+    const day_name = DAYS[d.getDay()];
+
+    try {
+      await api(`/api/movements/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          entry_date,
+          day_name,
+          movement_type: document.getElementById("editType").value,
+          drink_id: document.getElementById("editDrink").value,
+          qty_text: document.getElementById("editQty").value,
+          shift: document.getElementById("editShift").value,
+          officer: document.getElementById("editOfficer").value,
+        }),
+      });
+      closeEditModal();
+      showToast("✅ Record updated & stock recalculated!");
+      await loadState();
+    } catch (e) {
+      showToast("❌ Update failed: " + e.message);
+    }
+  }
+
+  async function deleteMovement(id) {
+    if (!confirm("Delete this record and reverse its stock count?")) return;
+    try {
+      await api(`/api/movements/${id}`, { method: "DELETE" });
+      showToast("🗑️ Record deleted.");
+      await loadState();
+    } catch (e) {
+      showToast("❌ Delete failed: " + e.message);
+    }
+  }
+
+  // Admin: Add Master Drink
+  async function saveMasterDrink() {
+    const name = document.getElementById("newDrinkName").value.trim();
+    if (!name) return showToast("⚠️ Enter a drink name.");
+    try {
+      await api("/api/drinks", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          pack_unit: document.getElementById("newDrinkUnit").value,
+          units_per_pack: document.getElementById("newDrinkPerPack").value,
+          cage_qty: document.getElementById("newDrinkCageQty").value,
+          notes: document.getElementById("newDrinkNotes").value.trim(),
+        }),
+      });
+      document.getElementById("newDrinkName").value = "";
+      document.getElementById("newDrinkNotes").value = "";
+      showToast("✅ Drink saved to master list!");
+      await loadState();
+      resetEntryRows();
+    } catch (e) {
+      showToast("❌ Error: " + e.message);
+    }
+  }
+
+  // Exports: CSV + JSON Backup / Restore
+  function exportCSV() {
+    const headers = ["No", "Day", "Date", "Type", "Drinks Type", "Qty", "Pack Unit", "Officer", "Shift", "Notes"];
+    const rows = state.movements.map((m, i) => [
+      i + 1,
+      m.day_name,
+      m.entry_date,
+      m.movement_type,
+      `"${m.drink_name.replace(/"/g, '""')}"`,
+      `"${m.qty_text}"`,
+      m.pack_unit,
+      `"${m.officer}"`,
+      m.shift,
+      `"${(m.notes || "").replace(/"/g, '""')}"`,
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `fridge_drink_ops_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+  }
+
+  async function downloadBackupJSON() {
+    try {
+      const backup = await api("/api/backup");
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `dzul_art_fridge_backup_${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      showToast("⬇️ Full .JSON backup downloaded!");
+    } catch (e) {
+      showToast("❌ Backup failed: " + e.message);
+    }
+  }
+
+  async function restoreBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!confirm("Restore from this .JSON backup? This will overwrite current history logs.")) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      await api("/api/restore", { method: "POST", body: JSON.stringify(parsed) });
+      showToast("✅ Backup restored successfully!");
+      await loadState();
+      resetEntryRows();
+    } catch (e) {
+      showToast("❌ Restore failed: " + e.message);
+    }
+  }
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll(".tab-panel").forEach((p) => (p.style.display = "none"));
+    document.getElementById(tabId).style.display = "block";
+    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  // Boot
+  setTheme(localStorage.getItem("ops_theme") || "dim");
+  initDates();
+  document.getElementById("workerUrlInput").value = workerUrl;
+  if (passcode) {
+    document.getElementById("passcodeInput").value = passcode;
+    login();
+  }
+</script>
+</body>
+</html>
