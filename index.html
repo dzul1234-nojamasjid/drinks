@@ -57,9 +57,8 @@
       line-height: 1.45;
       transition: background 0.2s, color 0.2s;
     }
-    .container { max-width: 1100px; margin: 0 auto; padding: 14px; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 14px; }
 
-    /* Top Bar */
     .topbar {
       display: flex; flex-wrap: wrap; gap: 10px;
       align-items: center; justify-content: space-between;
@@ -77,6 +76,7 @@
     }
     .badge.admin { color: var(--warning); border-color: var(--warning); }
     .badge.ops { color: var(--success); border-color: var(--success); }
+    .badge.synced { color: var(--success); border-color: var(--success); font-size: 0.7rem; }
 
     button, select, input {
       font: inherit; color: var(--text); background: var(--surface-2);
@@ -91,12 +91,10 @@
     .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
     .btn-sm { padding: 5px 9px; font-size: 0.82rem; }
 
-    /* Theme Switcher */
     .theme-group { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
     .theme-group button { border: none; border-radius: 0; padding: 6px 10px; font-size: 0.8rem; }
     .theme-group button.active { background: var(--primary); color: #fff; }
 
-    /* Cards & Tabs */
     .card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; padding: 16px; margin-bottom: 14px;
@@ -106,23 +104,22 @@
     .tab-btn { flex: 1 1 140px; text-align: center; padding: 10px; background: var(--surface); }
     .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* Forms */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-bottom: 12px; }
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 12px; }
     label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
     .w-100 { width: 100%; }
 
-    /* Entry Rows */
     .entry-row {
-      display: grid; grid-template-columns: 2fr 1fr 1.2fr auto;
+      display: grid; grid-template-columns: 2.2fr 1fr 1.2fr auto;
       gap: 8px; align-items: center; padding: 10px;
       background: var(--surface-2); border-radius: 10px; margin-bottom: 8px;
     }
+    .row-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.75rem; color: var(--muted); }
     @media (max-width: 680px) {
       .entry-row { grid-template-columns: 1fr 1fr; }
       .entry-row .drink-col { grid-column: 1 / -1; }
     }
 
-    /* Tables */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
     th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -131,7 +128,6 @@
     .tag-out { color: var(--primary); font-weight: 700; }
     .low-stock { color: var(--danger); font-weight: 700; }
 
-    /* Modal */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.65);
       display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
@@ -139,14 +135,12 @@
     .modal-backdrop.open { display: flex; }
     .modal { width: 100%; max-width: 480px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
 
-    /* Toast */
     #toast {
       position: fixed; bottom: 20px; right: 20px; background: var(--surface);
       border: 1px solid var(--primary); padding: 10px 16px; border-radius: 10px;
       box-shadow: var(--shadow); display: none; z-index: 99; font-weight: 600;
     }
 
-    /* Footer Signature */
     footer {
       text-align: center; padding: 20px 10px 28px; color: var(--muted);
       font-size: 0.85rem; letter-spacing: 0.04em;
@@ -155,7 +149,6 @@
       font-weight: 800; color: var(--primary); font-style: italic;
     }
 
-    /* Print / PDF Styling */
     @media print {
       body { background: #fff !important; color: #000 !important; }
       .no-print, .tabs, .topbar .controls, button, #loginScreen { display: none !important; }
@@ -171,8 +164,8 @@
   <!-- TOP HEADER -->
   <div class="topbar">
     <div class="brand">
-      <h1>🧊 Fridge & Cage Drink Ops</h1>
-      <small>TO: OPERATIONS TEAM — Digital Top-Up & Cage Tracker</small>
+      <h1>🧊 Fridge &amp; Cage Drink Ops</h1>
+      <small>TO: OPERATIONS TEAM — Digital Top-Up &amp; Cage Tracker</small>
     </div>
     <div class="controls">
       <div class="theme-group" title="Switch Display Mode">
@@ -185,7 +178,7 @@
     </div>
   </div>
 
-  <!-- LOGIN SCREEN (Password Only — No Username & No Worker URL Box) -->
+  <!-- LOGIN SCREEN -->
   <div id="loginScreen" class="card" style="max-width: 420px; margin: 40px auto;">
     <h2 style="margin-top:0;">🔐 Enter Access Passcode</h2>
     <p style="color:var(--muted); font-size:0.88rem; margin-top:-6px;">
@@ -203,155 +196,150 @@
   <div id="appScreen" style="display:none;">
     <!-- NAVIGATION TABS -->
     <div class="tabs no-print">
-      <button class="tab-btn active" onclick="switchTab('partA', this)">📥 Part A: Top-Up (Cage → Fridge)</button>
-      <button class="tab-btn" onclick="switchTab('partB', this)">🚚 Part B: Stock In (Delivery → Cage)</button>
-      <button class="tab-btn" onclick="switchTab('partC', this)">📊 Part C: Cage & Fridge + Logs</button>
-      <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ Admin: Drinks & Backup</button>
+      <button class="tab-btn active" onclick="switchTab('partA', this)">📥 PART A (FRIDGE)</button>
+      <button class="tab-btn" onclick="switchTab('partB', this)">🚚 PART B (CAGE)</button>
+      <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (CURRENT FRIDGE AND CAGE BALANCE)</button>
+      <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
+      <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
     </div>
 
-    <!-- PART A: FRIDGE TOP-UP (CAGE -> FRIDGE) -->
+    <!-- PART A (FRIDGE) -->
     <section id="partA" class="tab-panel card">
-      <h2 style="margin-top:0;">Part A: Fridge Drink Top-Up (Take from Cage → Put in Fridge)</h2>
-      <div class="grid-4">
+      <h2 style="margin-top:0;">PART A (FRIDGE)</h2>
+      <div class="grid-2">
         <div>
-          <label>Date</label>
-          <input type="date" id="topupDate" class="w-100" onchange="syncDayName('topupDate','topupDay')" />
-        </div>
-        <div>
-          <label>Day</label>
-          <input type="text" id="topupDay" class="w-100" readonly />
-        </div>
-        <div>
-          <label>Shift</label>
-          <select id="topupShift" class="w-100">
-            <option value="AM">AM Shift</option>
-            <option value="PM" selected>PM Shift</option>
-            <option value="Weekend">Weekend</option>
-            <option value="Ad-hoc">Ad-hoc</option>
-          </select>
+          <label>Date (DDD, DD MMM YYYY, HH:MM hrs)</label>
+          <input type="text" id="fridgeDateTime" class="w-100" />
         </div>
         <div>
           <label>Officer ID / Name</label>
-          <select id="topupOfficer" class="w-100">
-            <option value="Iral (pm)">Iral (pm)</option>
-            <option value="Dzul">Dzul</option>
+          <select id="fridgeOfficer" class="w-100">
             <option value="Ops Team">Ops Team</option>
             <option value="Admin">Admin</option>
+            <option value="Dzul" selected>Dzul</option>
           </select>
         </div>
       </div>
 
-      <div id="topupRows"></div>
+      <div id="fridgeRows"></div>
 
-      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
-        <button type="button" onclick="addEntryRow('topupRows')">+ Add Another Drink Row</button>
-        <button type="button" class="btn-primary" onclick="submitBatch('TOP_UP')">💾 Save Fridge Top-Up</button>
-        <button type="button" onclick="copyChatSummary('TOP_UP')">📋 Copy Summary for WhatsApp/Chat</button>
+      <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+        <button type="button" onclick="addEntryRow('fridgeRows', 'FRIDGE TOP-UPS')">+ Add Drink Row</button>
+        <button type="button" class="btn-primary" onclick="updateRecords('FRIDGE TOP-UPS')">✅ Update Records</button>
+        <button type="button" onclick="clearWorkingForm('FRIDGE TOP-UPS')">🧹 Clear Form</button>
+        <button type="button" onclick="copyWhatsApp('FRIDGE TOP-UPS')">💬 Copy for WhatsApp</button>
+        <button type="button" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </section>
 
-    <!-- PART B: NEW STOCK ARRIVAL (DELIVERY -> CAGE) -->
+    <!-- PART B (CAGE) -->
     <section id="partB" class="tab-panel card" style="display:none;">
-      <h2 style="margin-top:0;">Part B: New Stock Arrival (Delivery → Put Inside Cage)</h2>
-      <div class="grid-4">
+      <h2 style="margin-top:0;">PART B (CAGE)</h2>
+      <div class="grid-2">
         <div>
-          <label>Arrival Date</label>
-          <input type="date" id="stockinDate" class="w-100" onchange="syncDayName('stockinDate','stockinDay')" />
+          <label>Date (DDD, DD MMM YYYY, HH:MM hrs)</label>
+          <input type="text" id="cageDateTime" class="w-100" />
         </div>
         <div>
-          <label>Day</label>
-          <input type="text" id="stockinDay" class="w-100" readonly />
-        </div>
-        <div>
-          <label>Shift / Session</label>
-          <select id="stockinShift" class="w-100">
-            <option value="AM">AM Delivery</option>
-            <option value="PM" selected>PM Delivery</option>
-            <option value="Weekend">Weekend Delivery</option>
-          </select>
-        </div>
-        <div>
-          <label>Checked By (Officer)</label>
-          <select id="stockinOfficer" class="w-100">
-            <option value="Iral (pm)">Iral (pm)</option>
-            <option value="Dzul">Dzul</option>
+          <label>Officer ID / Name</label>
+          <select id="cageOfficer" class="w-100">
             <option value="Ops Team">Ops Team</option>
             <option value="Admin">Admin</option>
+            <option value="Dzul" selected>Dzul</option>
           </select>
         </div>
       </div>
 
-      <div id="stockinRows"></div>
+      <div id="cageRows"></div>
 
-      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
-        <button type="button" onclick="addEntryRow('stockinRows')">+ Add Another Drink Row</button>
-        <button type="button" class="btn-success" onclick="submitBatch('STOCK_IN')">🚚 Save Cage Stock-In</button>
+      <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+        <button type="button" onclick="addEntryRow('cageRows', 'CAGE')">+ Add Drink Row</button>
+        <button type="button" class="btn-success" onclick="updateRecords('CAGE')">✅ Update Records</button>
+        <button type="button" onclick="clearWorkingForm('CAGE')">🧹 Clear Form</button>
+        <button type="button" onclick="copyWhatsApp('CAGE')">💬 Copy for WhatsApp</button>
+        <button type="button" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </section>
 
-    <!-- PART C: CAGE & FRIDGE SNAPSHOT + HISTORY + EXPORTS -->
-    <section id="partC" class="tab-panel" style="display:none;">
-      <div class="card">
-        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
-          <h2 style="margin:0;">Part C: Current Cage & Fridge Balance</h2>
-          <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
-            <button onclick="loadState()">🔄 Refresh</button>
-            <button onclick="exportCSV()">📄 Export CSV</button>
-            <button class="btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Drink Name</th>
-                <th>Pack Type</th>
-                <th>Inside Cage Left</th>
-                <th>Fridge Topped Up</th>
-                <th>Notes / Code</th>
-              </tr>
-            </thead>
-            <tbody id="balanceTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
-          <h2 style="margin:0;">📋 Movement History Log (Top-Ups & Deliveries)</h2>
-          <select id="filterType" class="no-print" onchange="renderHistory()">
-            <option value="ALL">Show All Movements</option>
-            <option value="TOP_UP">Part A: Fridge Top-Ups Only</option>
-            <option value="STOCK_IN">Part B: Cage Stock-Ins Only</option>
+    <!-- PART C (CURRENT FRIDGE AND CAGE BALANCE) -->
+    <section id="partC" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 style="margin:0;">PART C (CURRENT FRIDGE AND CAGE BALANCE)</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <select id="balanceSort" onchange="renderBalances()">
+            <option value="AZ">Sort Drink: A–Z</option>
+            <option value="ZA">Sort Drink: Z–A</option>
           </select>
+          <button onclick="loadState()">🔄 Refresh</button>
+          <button onclick="exportCSV()">📄 Export CSV</button>
+          <button class="btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Day</th>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Drinks Type</th>
-                <th>Qty / Cartons</th>
-                <th>Officer</th>
-                <th class="no-print admin-col" style="display:none;">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="historyTableBody"></tbody>
-          </table>
-        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Drink Name</th>
+              <th>Pack Type</th>
+              <th>BALANCE (CAGE)</th>
+              <th>TOPPED UP (FRIDGE)</th>
+              <th>Notes / Code</th>
+              <th class="no-print admin-col" style="display:none;">Edit</th>
+            </tr>
+          </thead>
+          <tbody id="balanceTableBody"></tbody>
+        </table>
       </div>
     </section>
 
-    <!-- ADMIN TAB: MANAGE DRINKS + JSON BACKUP / RESTORE -->
+    <!-- LOGS TAB -->
+    <section id="logsTab" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 style="margin:0;">LOGS</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <select id="logTypeFilter" onchange="renderLogs()">
+            <option value="ALL">Type: All (CAGE &amp; FRIDGE TOP-UPS)</option>
+            <option value="FRIDGE TOP-UPS">FRIDGE TOP-UPS</option>
+            <option value="CAGE">CAGE</option>
+          </select>
+          <select id="logDrinkSort" onchange="renderLogs()">
+            <option value="NONE">Drink Order: Default</option>
+            <option value="AZ">Drink: A–Z</option>
+            <option value="ZA">Drink: Z–A</option>
+          </select>
+          <select id="logDateSort" onchange="renderLogs()">
+            <option value="NEW_OLD">Date: New–Old</option>
+            <option value="OLD_NEW">Date: Old–New</option>
+          </select>
+          <button onclick="exportCSV()">📄 Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Day</th>
+              <th>Date / Time</th>
+              <th>Type</th>
+              <th>Drink Name</th>
+              <th>Qty</th>
+              <th>Officer</th>
+              <th class="no-print admin-col" style="display:none;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="logsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB -->
     <section id="adminTab" class="tab-panel" style="display:none;">
       <div class="card">
-        <h2 style="margin-top:0;">💾 Full System Backup & Restore (.JSON)</h2>
+        <h2 style="margin-top:0;">💾 Full System Backup &amp; Restore (.JSON)</h2>
         <p style="color:var(--muted); font-size:0.88rem;">
-          Download a complete <code>.json</code> snapshot of all drinks and logs, or restore from a previous backup file.
+          Download a full <code>.json</code> backup of all drinks and logs, or restore from a saved <code>.json</code> file.
         </p>
         <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
           <button class="btn-primary" onclick="downloadBackupJSON()">⬇️ Download .JSON Backup</button>
@@ -363,34 +351,26 @@
       </div>
 
       <div class="card">
-        <h2 style="margin-top:0;">➕ Add / Update Master Drink</h2>
+        <h2 style="margin-top:0;">➕ Add New Drink to Master List</h2>
         <div class="grid-4">
           <div>
             <label>Drink Name</label>
-            <input type="text" id="newDrinkName" class="w-100" placeholder="e.g. Milo Can 240ml" />
+            <input type="text" id="newDrinkName" class="w-100" placeholder="e.g. MILO CAN" />
           </div>
           <div>
-            <label>Pack Unit</label>
-            <select id="newDrinkUnit" class="w-100">
-              <option value="carton">Carton</option>
-              <option value="box">Box</option>
-              <option value="stack">Stack</option>
-            </select>
+            <label>Pack Type</label>
+            <input type="text" id="newDrinkUnit" class="w-100" value="Carton" readonly />
           </div>
           <div>
-            <label>Units per Pack</label>
-            <input type="number" id="newDrinkPerPack" class="w-100" value="24" min="1" />
+            <label>BALANCE (CAGE)</label>
+            <input type="number" id="newDrinkCageQty" class="w-100" value="0" min="0" step="any" />
           </div>
           <div>
-            <label>Current Cage Qty</label>
-            <input type="number" id="newDrinkCageQty" class="w-100" value="0" min="0" />
+            <label>Notes / Code</label>
+            <input type="text" id="newDrinkNotes" class="w-100" placeholder="Optional remarks" />
           </div>
         </div>
-        <div style="margin-bottom:10px;">
-          <label>Notes / Batch Code</label>
-          <input type="text" id="newDrinkNotes" class="w-100" placeholder="e.g. x 24 cans | Code: 14999B" />
-        </div>
-        <button class="btn-success" onclick="saveMasterDrink()">Save Drink to Master List</button>
+        <button class="btn-success" onclick="saveMasterDrink()">Add Drink</button>
       </div>
     </section>
   </div>
@@ -400,20 +380,20 @@
   </footer>
 </div>
 
-<!-- EDIT / MODIFY MODAL (ADMIN) -->
+<!-- EDIT LOG MODAL (ADMIN) -->
 <div id="editModal" class="modal-backdrop">
   <div class="modal">
-    <h3 style="margin-top:0;">✏️ Edit / Modify Record</h3>
+    <h3 style="margin-top:0;">✏️ Edit Log Entry (Admin)</h3>
     <input type="hidden" id="editId" />
     <div style="margin-bottom:10px;">
-      <label>Date</label>
+      <label>Date (YYYY-MM-DD)</label>
       <input type="date" id="editDate" class="w-100" />
     </div>
     <div style="margin-bottom:10px;">
-      <label>Movement Type</label>
+      <label>Type</label>
       <select id="editType" class="w-100">
-        <option value="TOP_UP">Part A: Fridge Top-Up</option>
-        <option value="STOCK_IN">Part B: Cage Stock-In</option>
+        <option value="FRIDGE TOP-UPS">FRIDGE TOP-UPS</option>
+        <option value="CAGE">CAGE</option>
       </select>
     </div>
     <div style="margin-bottom:10px;">
@@ -421,25 +401,50 @@
       <select id="editDrink" class="w-100"></select>
     </div>
     <div style="margin-bottom:10px;">
-      <label>Quantity (e.g. 1, 2, 12x2)</label>
+      <label>Qty (Carton)</label>
       <input type="text" id="editQty" class="w-100" />
-    </div>
-    <div style="margin-bottom:10px;">
-      <label>Shift</label>
-      <select id="editShift" class="w-100">
-        <option value="AM">AM</option>
-        <option value="PM">PM</option>
-        <option value="Weekend">Weekend</option>
-        <option value="Ad-hoc">Ad-hoc</option>
-      </select>
     </div>
     <div style="margin-bottom:14px;">
       <label>Officer</label>
-      <input type="text" id="editOfficer" class="w-100" />
+      <select id="editOfficer" class="w-100">
+        <option value="Ops Team">Ops Team</option>
+        <option value="Admin">Admin</option>
+        <option value="Dzul">Dzul</option>
+      </select>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end;">
       <button onclick="closeEditModal()">Cancel</button>
-      <button class="btn-primary" onclick="submitEdit()">Update Record</button>
+      <button class="btn-primary" onclick="submitEdit()">Update Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINE-TUNE BALANCE MODAL (ADMIN) -->
+<div id="drinkModal" class="modal-backdrop">
+  <div class="modal">
+    <h3 style="margin-top:0;">🎛️ Fine-Tune Balance (Admin)</h3>
+    <input type="hidden" id="tuneDrinkId" />
+    <div style="margin-bottom:10px;">
+      <label>Drink Name</label>
+      <input type="text" id="tuneDrinkName" class="w-100" />
+    </div>
+    <div class="grid-2" style="margin-bottom:10px;">
+      <div>
+        <label>BALANCE (CAGE)</label>
+        <input type="number" id="tuneCageQty" class="w-100" min="0" step="any" />
+      </div>
+      <div>
+        <label>TOPPED UP (FRIDGE)</label>
+        <input type="number" id="tuneFridgeQty" class="w-100" min="0" step="any" />
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label>Notes / Code (e.g. spoilt / expired remarks)</label>
+      <input type="text" id="tuneNotes" class="w-100" />
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button onclick="closeDrinkModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitDrinkTune()">Save Balance</button>
     </div>
   </div>
 </div>
@@ -447,14 +452,14 @@
 <div id="toast"></div>
 
 <script>
-  // Your Cloudflare Worker URL is configured here so users don't see or type it
   const DEFAULT_WORKER_URL = "https://drinks.dzul1234.workers.dev";
 
   let state = { role: null, drinks: [], movements: [] };
   let passcode = sessionStorage.getItem("ops_pass") || "";
   let workerUrl = localStorage.getItem("ops_worker_url") || DEFAULT_WORKER_URL;
 
-  const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const SHORT_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   function showToast(msg) {
     const t = document.getElementById("toast");
@@ -471,19 +476,61 @@
     });
   }
 
-  function initDates() {
-    const today = new Date().toISOString().split("T")[0];
-    document.getElementById("topupDate").value = today;
-    document.getElementById("stockinDate").value = today;
-    syncDayName("topupDate", "topupDay");
-    syncDayName("stockinDate", "stockinDay");
+  function formatNowCustom(dateObj = new Date()) {
+    const ddd = SHORT_DAYS[dateObj.getDay()];
+    const dd = String(dateObj.getDate()).padStart(2, "0");
+    const mmm = MONTHS[dateObj.getMonth()];
+    const yyyy = dateObj.getFullYear();
+    const hh = String(dateObj.getHours()).padStart(2, "0");
+    const mm = String(dateObj.getMinutes()).padStart(2, "0");
+    return `${ddd}, ${dd} ${mmm} ${yyyy}, ${hh}:${mm} hrs`;
   }
 
-  function syncDayName(dateInputId, dayInputId) {
-    const val = document.getElementById(dateInputId).value;
-    if (!val) return;
-    const d = new Date(val + "T00:00:00");
-    document.getElementById(dayInputId).value = DAYS[d.getDay()];
+  function getISOKey(dateObj = new Date()) {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const d = String(dateObj.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function extractDayAndISODate(labelText) {
+    const now = new Date();
+    const fallbackISO = getISOKey(now);
+    const fallbackDay = SHORT_DAYS[now.getDay()];
+    if (!labelText) return { day: fallbackDay, isoDate: fallbackISO };
+
+    const dayMatch = labelText.match(/\b(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\b/i);
+    const day = dayMatch ? dayMatch[1][0].toUpperCase() + dayMatch[1].slice(1, 3).toLowerCase() : fallbackDay;
+
+    const dateMatch = labelText.match(/\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})\b/i);
+    if (!dateMatch) return { day, isoDate: fallbackISO };
+
+    const dd = String(dateMatch[1]).padStart(2, "0");
+    const monthIdx = MONTHS.findIndex((m) => m.toLowerCase() === dateMatch[2].toLowerCase());
+    const yyyy = dateMatch[3];
+    const isoDate = monthIdx >= 0 ? `${yyyy}-${String(monthIdx + 1).padStart(2, "0")}-${dd}` : fallbackISO;
+    return { day, isoDate };
+  }
+
+  function initDateTimeFields() {
+    const formatted = formatNowCustom(new Date());
+    document.getElementById("fridgeDateTime").value = formatted;
+    document.getElementById("cageDateTime").value = formatted;
+  }
+
+  // Auto-clear working forms past midnight
+  function checkMidnightAutoClear() {
+    const todayISO = getISOKey(new Date());
+    const lastDayISO = localStorage.getItem("ops_last_active_day");
+    if (lastDayISO && lastDayISO !== todayISO) {
+      localStorage.removeItem("ops_draft_FRIDGE TOP-UPS");
+      localStorage.removeItem("ops_draft_CAGE");
+      initDateTimeFields();
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+      renderWorkingRows("cageRows", "CAGE");
+      showToast("🕛 Past midnight — working form auto-cleared for new day!");
+    }
+    localStorage.setItem("ops_last_active_day", todayISO);
   }
 
   async function api(path, options = {}) {
@@ -535,6 +582,8 @@
   }
 
   async function enterApp() {
+    checkMidnightAutoClear();
+    initDateTimeFields();
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("appScreen").style.display = "block";
 
@@ -551,7 +600,8 @@
     });
 
     await loadState();
-    resetEntryRows();
+    renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+    renderWorkingRows("cageRows", "CAGE");
   }
 
   async function loadState() {
@@ -560,52 +610,125 @@
       state.drinks = data.drinks || [];
       state.movements = data.movements || [];
       renderBalances();
-      renderHistory();
+      renderLogs();
       populateEditDrinkDropdown();
     } catch (e) {
       showToast("Error loading data: " + e.message);
     }
   }
 
-  function getSortedActiveDrinks() {
+  function getSortedActiveDrinks(order = "AZ") {
     return state.drinks
       .filter((d) => d.is_active !== false)
       .slice()
-      .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+      .sort((a, b) => {
+        const cmp = a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+        return order === "ZA" ? -cmp : cmp;
+      });
   }
 
-  function buildDrinkOptionsHTML() {
-    const activeDrinks = getSortedActiveDrinks();
+  function buildDrinkOptionsHTML(selectedId = "") {
+    const activeDrinks = getSortedActiveDrinks("AZ");
     let html = `<option value="">-- Select Drink (A–Z) --</option>`;
     for (const d of activeDrinks) {
-      html += `<option value="${d.id}">${d.name} [${d.pack_unit} | Cage: ${d.cage_qty}]</option>`;
+      const sel = d.id === selectedId ? "selected" : "";
+      html += `<option value="${d.id}" ${sel}>${d.name} [Cage: ${d.cage_qty} Carton]</option>`;
     }
-    html += `<option value="__NEW__">➕ Other / New Drink (Type Name)</option>`;
+    html += `<option value="__NEW__" ${selectedId === "__NEW__" ? "selected" : ""}>➕ Other / New Drink (Type Name)</option>`;
     return html;
   }
 
-  function addEntryRow(containerId) {
+  // Draft storage so 9 AM entries remain visible at 2 PM without double-submitting
+  function getDraft(movementType) {
+    try {
+      const raw = localStorage.getItem(`ops_draft_${movementType}`);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch {}
+    return [
+      { drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" },
+      { drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" },
+      { drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" },
+    ];
+  }
+
+  function saveDraft(movementType, rowsData) {
+    localStorage.setItem(`ops_draft_${movementType}`, JSON.stringify(rowsData));
+  }
+
+  function collectRowsFromDOM(containerId) {
+    const rows = [];
+    document.querySelectorAll(`#${containerId} .entry-row`).forEach((r) => {
+      rows.push({
+        drink_id: r.querySelector(".drink-select").value,
+        custom_drink_name: r.querySelector(".custom-drink-input").value,
+        qty_text: r.querySelector(".qty-input").value,
+        notes: r.querySelector(".note-input").value,
+        submitted_qty: r.dataset.submittedQty || "",
+      });
+    });
+    return rows;
+  }
+
+  function renderWorkingRows(containerId, movementType) {
     const container = document.getElementById(containerId);
-    const row = document.createElement("div");
-    row.className = "entry-row";
-    row.innerHTML = `
-      <div class="drink-col">
-        <select class="w-100 drink-select" onchange="toggleCustomDrink(this)">
-          ${buildDrinkOptionsHTML()}
-        </select>
-        <input type="text" class="w-100 custom-drink-input" placeholder="Type new drink name..." style="display:none; margin-top:6px;" />
-      </div>
-      <div>
-        <input type="text" class="w-100 qty-input" placeholder="Qty (e.g. 1 or 12x2)" />
-      </div>
-      <div>
-        <input type="text" class="w-100 note-input" placeholder="Remarks (optional)" />
-      </div>
-      <div>
-        <button type="button" class="btn-danger btn-sm" onclick="this.closest('.entry-row').remove()">✕</button>
-      </div>
-    `;
-    container.appendChild(row);
+    const items = getDraft(movementType);
+    container.innerHTML = "";
+
+    items.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "entry-row";
+      row.dataset.submittedQty = item.submitted_qty || "";
+      const isNew = item.drink_id === "__NEW__";
+      const hasSubmitted = Boolean(item.submitted_qty);
+
+      row.innerHTML = `
+        <div class="drink-col">
+          <select class="w-100 drink-select" onchange="toggleCustomDrink(this); persistDraft('${containerId}','${movementType}')">
+            ${buildDrinkOptionsHTML(item.drink_id)}
+          </select>
+          <input type="text" class="w-100 custom-drink-input" placeholder="Type new drink name..."
+            value="${item.custom_drink_name || ""}"
+            style="display:${isNew ? "block" : "none"}; margin-top:6px;"
+            oninput="persistDraft('${containerId}','${movementType}')" />
+          <div class="row-meta">
+            ${hasSubmitted ? `<span class="badge synced">Logged: ${item.submitted_qty} Carton</span>` : `<span>Ready</span>`}
+          </div>
+        </div>
+        <div>
+          <input type="text" class="w-100 qty-input" placeholder="Carton qty (e.g. 1 or 12x2)"
+            value="${item.qty_text || ""}"
+            oninput="persistDraft('${containerId}','${movementType}')" />
+        </div>
+        <div>
+          <input type="text" class="w-100 note-input" placeholder="Remarks (optional)"
+            value="${item.notes || ""}"
+            oninput="persistDraft('${containerId}','${movementType}')" />
+        </div>
+        <div>
+          <button type="button" class="btn-danger btn-sm" onclick="removeDraftRow(this, '${containerId}', '${movementType}')">✕</button>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function persistDraft(containerId, movementType) {
+    saveDraft(movementType, collectRowsFromDOM(containerId));
+  }
+
+  function addEntryRow(containerId, movementType) {
+    const current = collectRowsFromDOM(containerId);
+    current.push({ drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" });
+    saveDraft(movementType, current);
+    renderWorkingRows(containerId, movementType);
+  }
+
+  function removeDraftRow(btn, containerId, movementType) {
+    btn.closest(".entry-row").remove();
+    const remaining = collectRowsFromDOM(containerId);
+    saveDraft(movementType, remaining.length ? remaining : [{ drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" }]);
+    renderWorkingRows(containerId, movementType);
   }
 
   function toggleCustomDrink(selectEl) {
@@ -613,37 +736,42 @@
     customInput.style.display = selectEl.value === "__NEW__" ? "block" : "none";
   }
 
-  function resetEntryRows() {
-    ["topupRows", "stockinRows"].forEach((id) => {
-      const el = document.getElementById(id);
-      el.innerHTML = "";
-      addEntryRow(id);
-      addEntryRow(id);
-      addEntryRow(id);
-    });
+  function clearWorkingForm(movementType) {
+    localStorage.removeItem(`ops_draft_${movementType}`);
+    initDateTimeFields();
+    if (movementType === "FRIDGE TOP-UPS") {
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+    } else {
+      renderWorkingRows("cageRows", "CAGE");
+    }
+    showToast("🧹 Working form cleared!");
   }
 
-  async function submitBatch(movementType) {
-    const isTopUp = movementType === "TOP_UP";
-    const containerId = isTopUp ? "topupRows" : "stockinRows";
-    const entry_date = document.getElementById(isTopUp ? "topupDate" : "stockinDate").value;
-    const day_name = document.getElementById(isTopUp ? "topupDay" : "stockinDay").value;
-    const shift = document.getElementById(isTopUp ? "topupShift" : "stockinShift").value;
-    const officer = document.getElementById(isTopUp ? "topupOfficer" : "stockinOfficer").value;
+  async function updateRecords(movementType) {
+    const isFridge = movementType === "FRIDGE TOP-UPS";
+    const containerId = isFridge ? "fridgeRows" : "cageRows";
+    const dtLabel = document.getElementById(isFridge ? "fridgeDateTime" : "cageDateTime").value.trim() || formatNowCustom(new Date());
+    const officer = document.getElementById(isFridge ? "fridgeOfficer" : "cageOfficer").value;
+    const { day, isoDate } = extractDayAndISODate(dtLabel);
 
-    const rows = document.querySelectorAll(`#${containerId} .entry-row`);
-    const items = [];
+    const domRows = Array.from(document.querySelectorAll(`#${containerId} .entry-row`));
+    const itemsToSend = [];
+    const targetRowIndices = [];
 
-    rows.forEach((r) => {
+    domRows.forEach((r, idx) => {
       const drink_id = r.querySelector(".drink-select").value;
       const custom_drink_name = r.querySelector(".custom-drink-input").value.trim();
       const qty_text = r.querySelector(".qty-input").value.trim();
       const notes = r.querySelector(".note-input").value.trim();
-      if (drink_id && qty_text) {
-        items.push({
-          entry_date,
-          day_name,
-          shift,
+      const alreadySubmittedQty = (r.dataset.submittedQty || "").trim();
+
+      // Only send rows with a drink + qty that haven't already been submitted at this exact qty
+      if (drink_id && qty_text && qty_text !== alreadySubmittedQty) {
+        itemsToSend.push({
+          entry_date: isoDate,
+          entry_datetime_label: dtLabel,
+          day_name: day,
+          shift: "Auto",
           movement_type: movementType,
           drink_id,
           custom_drink_name,
@@ -651,35 +779,43 @@
           officer,
           notes,
         });
+        targetRowIndices.push({ idx, qty_text });
       }
     });
 
-    if (items.length === 0) {
-      showToast("⚠️ Please select at least one drink and quantity.");
+    if (itemsToSend.length === 0) {
+      showToast("ℹ️ No new or changed quantities to update.");
       return;
     }
 
     try {
       await api("/api/movements", {
         method: "POST",
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items: itemsToSend }),
       });
-      showToast(`✅ Saved ${items.length} record(s)!`);
+
+      const draft = collectRowsFromDOM(containerId);
+      targetRowIndices.forEach(({ idx, qty_text }) => {
+        if (draft[idx]) draft[idx].submitted_qty = qty_text;
+      });
+      saveDraft(movementType, draft);
+
+      showToast(`✅ Updated ${itemsToSend.length} record(s)!`);
       await loadState();
-      resetEntryRows();
+      renderWorkingRows(containerId, movementType);
     } catch (e) {
-      showToast("❌ Save failed: " + e.message);
+      showToast("❌ Update failed: " + e.message);
     }
   }
 
-  function copyChatSummary() {
-    const date = document.getElementById("topupDate").value;
-    const day = document.getElementById("topupDay").value;
-    const shift = document.getElementById("topupShift").value;
-    const officer = document.getElementById("topupOfficer").value;
-    const rows = document.querySelectorAll("#topupRows .entry-row");
+  function copyWhatsApp(movementType) {
+    const isFridge = movementType === "FRIDGE TOP-UPS";
+    const containerId = isFridge ? "fridgeRows" : "cageRows";
+    const dtLabel = document.getElementById(isFridge ? "fridgeDateTime" : "cageDateTime").value.trim();
+    const officer = document.getElementById(isFridge ? "fridgeOfficer" : "cageOfficer").value;
+    const rows = document.querySelectorAll(`#${containerId} .entry-row`);
 
-    let lines = [`*FRIDGE DRINK TOP UP LIST*`, `Date: ${day}, ${date} (${shift})`, `Officer: ${officer}`, ``];
+    const lines = [`*${movementType}*`, `Date/Time: ${dtLabel}`, `Officer: ${officer}`, ``];
     let count = 0;
     rows.forEach((r) => {
       const sel = r.querySelector(".drink-select");
@@ -688,56 +824,95 @@
         count++;
         const name =
           sel.value === "__NEW__"
-            ? r.querySelector(".custom-drink-input").value.trim()
+            ? r.querySelector(".custom-drink-input").value.trim().toUpperCase()
             : sel.options[sel.selectedIndex].text.split(" [")[0];
-        lines.push(`${count}. ${name} — ${qty}`);
+        lines.push(`${count}. ${name} — ${qty} Carton`);
       }
     });
 
     if (count === 0) {
-      showToast("⚠️ Fill in drinks first before copying.");
+      showToast("⚠️ Nothing to copy yet.");
       return;
     }
     navigator.clipboard.writeText(lines.join("\n"));
-    showToast("📋 Copied summary to clipboard!");
+    showToast("💬 Copied WhatsApp summary!");
   }
 
   function renderBalances() {
+    const order = document.getElementById("balanceSort")?.value || "AZ";
     const tbody = document.getElementById("balanceTableBody");
     tbody.innerHTML = "";
-    state.drinks.forEach((d, idx) => {
+    const isAdmin = state.role === "ADMIN";
+
+    const list = state.drinks
+      .filter((d) => d.is_active !== false)
+      .slice()
+      .sort((a, b) => {
+        const cmp = a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+        return order === "ZA" ? -cmp : cmp;
+      });
+
+    list.forEach((d, idx) => {
       const cageClass = Number(d.cage_qty) <= 1 ? "low-stock" : "";
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${idx + 1}</td>
         <td><b>${d.name}</b> ${d.is_new ? '<span class="badge">NEW</span>' : ""}</td>
-        <td>${d.pack_unit}</td>
-        <td class="${cageClass}">${d.cage_qty} ${d.pack_unit}(s)</td>
-        <td>${d.fridge_qty} ${d.pack_unit}(s)</td>
-        <td style="color:var(--muted);">${d.notes || "-"}</td>
+        <td>Carton</td>
+        <td class="${cageClass}">${d.cage_qty}</td>
+        <td>${d.fridge_qty}</td>
+        <td style="color:var(--muted);">${d.notes || ""}</td>
+        <td class="no-print" style="display:${isAdmin ? "table-cell" : "none"};">
+          <button class="btn-sm" onclick="openDrinkModal('${d.id}')">✏️ Edit</button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  function renderHistory() {
-    const filter = document.getElementById("filterType").value;
-    const tbody = document.getElementById("historyTableBody");
+  function renderLogs() {
+    const typeFilter = document.getElementById("logTypeFilter")?.value || "ALL";
+    const drinkSort = document.getElementById("logDrinkSort")?.value || "NONE";
+    const dateSort = document.getElementById("logDateSort")?.value || "NEW_OLD";
+    const tbody = document.getElementById("logsTableBody");
     tbody.innerHTML = "";
     const isAdmin = state.role === "ADMIN";
 
-    const filtered = state.movements.filter((m) => filter === "ALL" || m.movement_type === filter);
-    filtered.forEach((m, idx) => {
-      const isStockIn = m.movement_type === "STOCK_IN";
+    let list = state.movements.filter((m) => {
+      const norm = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN" ? "CAGE" : "FRIDGE TOP-UPS";
+      return typeFilter === "ALL" || norm === typeFilter;
+    });
+
+    list = list.slice().sort((a, b) => {
+      if (drinkSort === "AZ") {
+        const c = a.drink_name.localeCompare(b.drink_name, undefined, { sensitivity: "base" });
+        if (c !== 0) return c;
+      } else if (drinkSort === "ZA") {
+        const c = b.drink_name.localeCompare(a.drink_name, undefined, { sensitivity: "base" });
+        if (c !== 0) return c;
+      }
+      const dateCmp = String(a.entry_date).localeCompare(String(b.entry_date));
+      if (dateCmp !== 0) return dateSort === "OLD_NEW" ? dateCmp : -dateCmp;
+      return dateSort === "OLD_NEW" ? Number(a.id) - Number(b.id) : Number(b.id) - Number(a.id);
+    });
+
+    list.forEach((m, idx) => {
+      const isCage = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN";
+      const displayType = isCage ? "CAGE" : "FRIDGE TOP-UPS";
+      const shortDay = SHORT_DAYS.includes(m.day_name)
+        ? m.day_name
+        : extractDayAndISODate(`${m.day_name}, ${m.entry_date}`).day;
+      const displayDate = m.entry_datetime_label || m.entry_date;
+
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${idx + 1}</td>
-        <td>${m.day_name}</td>
-        <td>${m.entry_date}</td>
-        <td class="${isStockIn ? "tag-in" : "tag-out"}">${isStockIn ? "STOCK IN (Cage)" : "TOP UP (Fridge)"}</td>
-        <td>${m.drink_name}</td>
-        <td><b>${m.qty_text}</b> (${m.pack_unit})</td>
-        <td>${m.officer} (${m.shift})</td>
+        <td>${shortDay}</td>
+        <td>${displayDate}</td>
+        <td class="${isCage ? "tag-in" : "tag-out"}">${displayType}</td>
+        <td><b>${m.drink_name}</b></td>
+        <td>${m.qty_text} Carton</td>
+        <td>${m.officer}</td>
         <td class="no-print" style="display:${isAdmin ? "table-cell" : "none"};">
           <button class="btn-sm" onclick="openEditModal(${m.id})">✏️ Edit</button>
           <button class="btn-sm btn-danger" onclick="deleteMovement(${m.id})">🗑️</button>
@@ -749,7 +924,7 @@
 
   function populateEditDrinkDropdown() {
     const sel = document.getElementById("editDrink");
-    const sorted = getSortedActiveDrinks();
+    const sorted = getSortedActiveDrinks("AZ");
     sel.innerHTML = sorted.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
   }
 
@@ -758,11 +933,11 @@
     if (!rec) return;
     document.getElementById("editId").value = rec.id;
     document.getElementById("editDate").value = rec.entry_date;
-    document.getElementById("editType").value = rec.movement_type;
+    document.getElementById("editType").value =
+      rec.movement_type === "CAGE" || rec.movement_type === "STOCK_IN" ? "CAGE" : "FRIDGE TOP-UPS";
     document.getElementById("editDrink").value = rec.drink_id;
     document.getElementById("editQty").value = rec.qty_text;
-    document.getElementById("editShift").value = rec.shift;
-    document.getElementById("editOfficer").value = rec.officer;
+    document.getElementById("editOfficer").value = rec.officer || "Dzul";
     document.getElementById("editModal").classList.add("open");
   }
 
@@ -774,7 +949,7 @@
     const id = document.getElementById("editId").value;
     const entry_date = document.getElementById("editDate").value;
     const d = new Date(entry_date + "T00:00:00");
-    const day_name = DAYS[d.getDay()];
+    const day_name = SHORT_DAYS[d.getDay()];
 
     try {
       await api(`/api/movements/${id}`, {
@@ -785,12 +960,11 @@
           movement_type: document.getElementById("editType").value,
           drink_id: document.getElementById("editDrink").value,
           qty_text: document.getElementById("editQty").value,
-          shift: document.getElementById("editShift").value,
           officer: document.getElementById("editOfficer").value,
         }),
       });
       closeEditModal();
-      showToast("✅ Record updated & stock recalculated!");
+      showToast("✅ Log updated!");
       await loadState();
     } catch (e) {
       showToast("❌ Update failed: " + e.message);
@@ -798,13 +972,51 @@
   }
 
   async function deleteMovement(id) {
-    if (!confirm("Delete this record and reverse its stock count?")) return;
+    if (!confirm("Delete this log entry?")) return;
     try {
       await api(`/api/movements/${id}`, { method: "DELETE" });
-      showToast("🗑️ Record deleted.");
+      showToast("🗑️ Log deleted.");
       await loadState();
     } catch (e) {
       showToast("❌ Delete failed: " + e.message);
+    }
+  }
+
+  function openDrinkModal(id) {
+    const d = state.drinks.find((item) => item.id === id);
+    if (!d) return;
+    document.getElementById("tuneDrinkId").value = d.id;
+    document.getElementById("tuneDrinkName").value = d.name;
+    document.getElementById("tuneCageQty").value = d.cage_qty;
+    document.getElementById("tuneFridgeQty").value = d.fridge_qty;
+    document.getElementById("tuneNotes").value = d.notes || "";
+    document.getElementById("drinkModal").classList.add("open");
+  }
+
+  function closeDrinkModal() {
+    document.getElementById("drinkModal").classList.remove("open");
+  }
+
+  async function submitDrinkTune() {
+    const id = document.getElementById("tuneDrinkId").value;
+    try {
+      await api(`/api/drinks/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: document.getElementById("tuneDrinkName").value.trim(),
+          cage_qty: document.getElementById("tuneCageQty").value,
+          fridge_qty: document.getElementById("tuneFridgeQty").value,
+          pack_unit: "Carton",
+          notes: document.getElementById("tuneNotes").value.trim(),
+        }),
+      });
+      closeDrinkModal();
+      showToast("✅ Balance saved!");
+      await loadState();
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+      renderWorkingRows("cageRows", "CAGE");
+    } catch (e) {
+      showToast("❌ Save failed: " + e.message);
     }
   }
 
@@ -816,41 +1028,40 @@
         method: "POST",
         body: JSON.stringify({
           name,
-          pack_unit: document.getElementById("newDrinkUnit").value,
-          units_per_pack: document.getElementById("newDrinkPerPack").value,
+          pack_unit: "Carton",
           cage_qty: document.getElementById("newDrinkCageQty").value,
           notes: document.getElementById("newDrinkNotes").value.trim(),
         }),
       });
       document.getElementById("newDrinkName").value = "";
       document.getElementById("newDrinkNotes").value = "";
-      showToast("✅ Drink saved to master list!");
+      showToast("✅ Drink added!");
       await loadState();
-      resetEntryRows();
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+      renderWorkingRows("cageRows", "CAGE");
     } catch (e) {
       showToast("❌ Error: " + e.message);
     }
   }
 
   function exportCSV() {
-    const headers = ["No", "Day", "Date", "Type", "Drinks Type", "Qty", "Pack Unit", "Officer", "Shift", "Notes"];
+    const headers = ["No", "Day", "Date/Time", "Type", "Drink Name", "Qty", "Pack Type", "Officer", "Notes"];
     const rows = state.movements.map((m, i) => [
       i + 1,
       m.day_name,
-      m.entry_date,
+      `"${(m.entry_datetime_label || m.entry_date).replace(/"/g, '""')}"`,
       m.movement_type,
       `"${m.drink_name.replace(/"/g, '""')}"`,
       `"${m.qty_text}"`,
-      m.pack_unit,
+      "Carton",
       `"${m.officer}"`,
-      m.shift,
       `"${(m.notes || "").replace(/"/g, '""')}"`,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `fridge_drink_ops_${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `fridge_cage_logs_${getISOKey(new Date())}.csv`;
     a.click();
   }
 
@@ -860,9 +1071,9 @@
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `dzul_art_fridge_backup_${new Date().toISOString().split("T")[0]}.json`;
+      a.download = `dzul_art_backup_${getISOKey(new Date())}.json`;
       a.click();
-      showToast("⬇️ Full .JSON backup downloaded!");
+      showToast("⬇️ .JSON backup downloaded!");
     } catch (e) {
       showToast("❌ Backup failed: " + e.message);
     }
@@ -871,20 +1082,20 @@
   async function restoreBackupJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (!confirm("Restore from this .JSON backup? This will overwrite current history logs.")) return;
+    if (!confirm("Restore from this .JSON backup? This will replace current logs.")) return;
     try {
       const text = await file.text();
       const parsed = JSON.parse(text);
       await api("/api/restore", { method: "POST", body: JSON.stringify(parsed) });
-      showToast("✅ Backup restored successfully!");
+      showToast("✅ Backup restored!");
       await loadState();
-      resetEntryRows();
     } catch (e) {
       showToast("❌ Restore failed: " + e.message);
     }
   }
 
   function switchTab(tabId, btn) {
+    checkMidnightAutoClear();
     document.querySelectorAll(".tab-panel").forEach((p) => (p.style.display = "none"));
     document.getElementById(tabId).style.display = "block";
     document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
@@ -892,7 +1103,7 @@
   }
 
   setTheme(localStorage.getItem("ops_theme") || "dim");
-  initDates();
+  initDateTimeFields();
   if (passcode) {
     document.getElementById("passcodeInput").value = passcode;
     login();
