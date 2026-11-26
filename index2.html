@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dim">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fridge & Cage Drink Ops — VALUE Edition</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-2: #eef2f6;
+      --text: #18202c;
+      --muted: #5b6777;
+      --border: #d5dce4;
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --success: #15803d;
+      --warning: #d97706;
+      --danger: #b91c1c;
+      --shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    [data-theme="dim"] {
+      --bg: #1e242d;
+      --surface: #272f3b;
+      --surface-2: #313b4a;
+      --text: #e6ecf5;
+      --muted: #9aa7b8;
+      --border: #3d4859;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --success: #15803d;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --shadow: 0 4px 14px rgba(0,0,0,0.25);
+    }
+    [data-theme="dark"] {
+      --bg: #0c0f14;
+      --surface: #151a22;
+      --surface-2: #1e2530;
+      --text: #f1f5f9;
+      --muted: #8b98a9;
+      --border: #2a3342;
+      --primary: #2563eb;
+      --primary-hover: #3b82f6;
+      --success: #15803d;
+      --warning: #f59e0b;
+      --danger: #dc2626;
+      --shadow: 0 4px 18px rgba(0,0,0,0.5);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      transition: background 0.2s, color 0.2s;
+    }
+    .container { max-width: 1120px; margin: 0 auto; padding: 14px; }
+
+    .topbar {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      align-items: center; justify-content: space-between;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .brand h1 { margin: 0; font-size: 1.15rem; }
+    .brand small { color: var(--muted); font-size: 0.8rem; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    .badge {
+      padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+      background: var(--surface-2); border: 1px solid var(--border);
+    }
+    .badge.admin { color: var(--warning); border-color: var(--warning); }
+    .badge.ops { color: #4ade80; border-color: #22c55e; }
+    .badge.synced { color: #4ade80; border-color: #22c55e; font-size: 0.7rem; }
+    .badge.stafffree { color: #a78bfa; border-color: #8b5cf6; font-size: 0.68rem; }
+
+    button, select, input {
+      font: inherit; color: var(--text); background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px 11px;
+    }
+    input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+    button { cursor: pointer; font-weight: 600; transition: 0.15s; }
+    button:hover { filter: brightness(1.08); }
+    .btn-primary {
+      background: var(--primary); color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.22);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+    }
+    .btn-success {
+      background: var(--success); color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.25);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .btn-warning { background: var(--warning); color: #111; border-color: var(--warning); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-sm { padding: 5px 9px; font-size: 0.82rem; }
+
+    .theme-group { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .theme-group button { border: none; border-radius: 0; padding: 6px 10px; font-size: 0.8rem; }
+    .theme-group button.active { background: var(--primary); color: #fff; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .tab-btn { flex: 1 1 130px; text-align: center; padding: 10px; background: var(--surface); }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-bottom: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 12px; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    .w-100 { width: 100%; }
+
+    .panel-subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: -8px 0 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .entry-row {
+      display: grid; grid-template-columns: 2.2fr 1fr 1.2fr auto;
+      gap: 8px; align-items: center; padding: 10px;
+      background: var(--surface-2); border-radius: 10px; margin-bottom: 8px;
+    }
+    .row-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.75rem; color: var(--muted); }
+    @media (max-width: 680px) {
+      .entry-row { grid-template-columns: 1fr 1fr; }
+      .entry-row .drink-col { grid-column: 1 / -1; }
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: var(--surface-2); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+    .tag-in { color: #4ade80; font-weight: 700; }
+    .tag-out { color: #60a5fa; font-weight: 700; }
+    .low-stock { color: #f87171; font-weight: 700; }
+
+    .print-only-meta {
+      display: none;
+      font-size: 0.82rem;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: 100%; max-width: 480px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+
+    #toast {
+      position: fixed; bottom: 20px; right: 20px; background: var(--surface);
+      border: 1px solid var(--primary); padding: 10px 16px; border-radius: 10px;
+      box-shadow: var(--shadow); display: none; z-index: 99; font-weight: 600;
+    }
+
+    footer {
+      text-align: center; padding: 20px 10px 28px; color: var(--muted);
+      font-size: 0.85rem; letter-spacing: 0.04em;
+    }
+    footer .sig {
+      font-weight: 800; color: var(--primary); font-style: italic;
+    }
+
+    @page {
+      margin: 12mm;
+    }
+
+    /* Period buttons */
+    .period-group {
+      display: inline-flex; flex-wrap: wrap;
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .period-group button {
+      border: none; border-radius: 0; padding: 8px 14px; font-size: 0.82rem;
+      background: var(--surface); border-right: 1px solid var(--border);
+    }
+    .period-group button:last-child { border-right: none; }
+    .period-group button.active { background: var(--primary); color: #fff; }
+
+    /* Summary cards */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px; margin-bottom: 14px;
+    }
+    .summary-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px;
+    }
+    .summary-card .label {
+      font-size: 0.72rem; color: var(--muted); font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .summary-card .value {
+      font-size: 1.35rem; font-weight: 800; line-height: 1.1;
+    }
+    .summary-card .hint {
+      font-size: 0.7rem; color: #d97706; margin-top: 2px;
+    }
+    .summary-card.highlight { border-color: var(--primary); background: var(--surface); }
+    .summary-card.highlight .value { color: var(--primary); }
+
+    /* Top sellers list */
+    .top-sellers { margin-bottom: 14px; }
+    .top-sellers h3 { font-size: 0.95rem; margin: 0 0 8px; }
+    .top-sellers ol { margin: 0; padding-left: 20px; font-size: 0.88rem; }
+    .top-sellers li { margin: 4px 0; }
+    .top-sellers .muted { color: var(--muted); font-size: 0.8rem; }
+
+    .disclaimer {
+      background: #fff7ed; border-left: 4px solid #d97706;
+      padding: 10px 14px; border-radius: 6px; font-size: 0.82rem;
+      color: #713f12; margin-bottom: 14px;
+    }
+    [data-theme="dim"] .disclaimer, [data-theme="dark"] .disclaimer {
+      background: rgba(217, 119, 6, 0.12); color: #fcd34d;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body, .container, .topbar, .card, .table-wrap, table, tr, th, td, footer {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+      .topbar, .card {
+        border: 1px solid #444444 !important;
+      }
+      th, td {
+        border: 1px solid #666666 !important;
+      }
+      th {
+        background: #eeeeee !important;
+        color: #000000 !important;
+      }
+      .print-only-meta {
+        display: block !important;
+      }
+      .no-print, .tabs, .topbar .controls, button, #loginScreen, #toast, .modal-backdrop, .period-group {
+        display: none !important;
+      }
+      footer, footer .sig {
+        color: #222222 !important;
+      }
+      .panel-subtitle {
+        color: #444444 !important;
+        display: block !important;
+      }
+      .summary-card {
+        background: #f5f5f5 !important;
+        border: 1px solid #888 !important;
+      }
+      .summary-card.highlight { background: #e8f0ff !important; }
+      .disclaimer {
+        background: #fff7ed !important;
+        color: #000000 !important;
+        border-left-color: #d97706 !important;
+      }
+      .top-sellers li { color: #000000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- TOP HEADER -->
+  <div class="topbar">
+    <div class="brand">
+      <h1>🧊 Fridge &amp; Cage Drink Ops</h1>
+      <small>TO: OPERATIONS TEAM — Digital Top-Up &amp; Cage Tracker (VALUE Edition)</small>
+    </div>
+    <div class="controls">
+      <div class="theme-group" title="Switch Display Mode">
+        <button type="button" data-set-theme="light" onclick="setTheme('light')">☀️ Light</button>
+        <button type="button" data-set-theme="dim" onclick="setTheme('dim')">🌗 Dim</button>
+        <button type="button" data-set-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+      </div>
+      <span id="roleBadge" class="badge" style="display:none;"></span>
+      <button id="logoutBtn" class="btn-sm no-print" style="display:none;" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="card" style="max-width: 420px; margin: 40px auto;">
+    <h2 style="margin-top:0;">🔐 Enter Access Passcode</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-top:-6px;">
+      Key in your <b>OPS</b> or <b>ADMIN</b> passcode to unlock.
+    </p>
+    <div style="margin-bottom:14px;">
+      <label>Passcode (OPS or ADMIN)</label>
+      <input type="password" id="passcodeInput" class="w-100" placeholder="Enter passcode..." onkeydown="if(event.key==='Enter') login()" />
+    </div>
+    <button class="btn-primary w-100" onclick="login()">Unlock System</button>
+    <p id="loginError" style="color:var(--danger); font-size:0.85rem; margin-bottom:0;"></p>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="appScreen" style="display:none;">
+    <!-- NAVIGATION TABS -->
+    <div class="tabs no-print">
+      <button class="tab-btn active" onclick="switchTab('partA', this)">📥 PART A (FRIDGE)</button>
+      <button class="tab-btn" onclick="switchTab('partB', this)">🚚 PART B (CAGE)</button>
+      <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (BALANCE)</button>
+      <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
+      <button class="tab-btn" onclick="switchTab('valueTab', this)">💰 VALUE</button>
+      <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
+    </div>
+
+    <!-- PART A (FRIDGE TOP-UP) -->
+    <section id="partA" class="tab-panel card">
+      <h2 style="margin-top:0;">PART A — FRIDGE TOP-UP</h2>
+      <p class="panel-subtitle">Outgoing: Cage → Fridge</p>
+      <div class="grid-2">
+        <div>
+          <label>Date (DDD, DD MMM YYYY, HH:MM hrs)</label>
+          <input type="text" id="fridgeDateTime" class="w-100" />
+        </div>
+        <div>
+          <label>Updated By</label>
+          <select id="fridgeOfficer" class="w-100">
+            <option value="Ops Team">Ops Team</option>
+            <option value="Admin">Admin</option>
+            <option value="Dzul" selected>Dzul</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="fridgeRows"></div>
+
+      <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+        <button type="button" onclick="addEntryRow('fridgeRows', 'FRIDGE TOP-UPS')">+ Add Drink Row</button>
+        <button type="button" class="btn-primary" onclick="updateRecords('FRIDGE TOP-UPS')">✅ UPDATE FRIDGE</button>
+        <button type="button" onclick="clearWorkingForm('FRIDGE TOP-UPS')">🧹 Clear Form</button>
+      </div>
+    </section>
+
+    <!-- PART B (CAGE STOCK) -->
+    <section id="partB" class="tab-panel card" style="display:none;">
+      <h2 style="margin-top:0;">PART B — CAGE STOCK</h2>
+      <p class="panel-subtitle">Incoming delivery &amp; current stock inside cage</p>
+      <div class="grid-2">
+        <div>
+          <label>Date (DDD, DD MMM YYYY, HH:MM hrs)</label>
+          <input type="text" id="cageDateTime" class="w-100" />
+        </div>
+        <div>
+          <label>Updated By</label>
+          <select id="cageOfficer" class="w-100">
+            <option value="Ops Team">Ops Team</option>
+            <option value="Admin">Admin</option>
+            <option value="Dzul" selected>Dzul</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="cageRows"></div>
+
+      <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
+        <button type="button" onclick="addEntryRow('cageRows', 'CAGE')">+ Add Drink Row</button>
+        <button type="button" class="btn-success" onclick="updateRecords('CAGE')">✅ UPDATE CAGE</button>
+        <button type="button" onclick="clearWorkingForm('CAGE')">🧹 Clear Form</button>
+      </div>
+    </section>
+
+    <!-- PART C (FRIDGE AND CAGE BAL) -->
+    <section id="partC" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 id="partCPrintTitle" style="margin:0;">Fridge &amp; Cage Drink Ops</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <select id="balanceSort" onchange="renderBalances()">
+            <option value="AZ">Sort Drink: A–Z</option>
+            <option value="ZA">Sort Drink: Z–A</option>
+          </select>
+          <button onclick="loadState()">🔄 Refresh</button>
+          <button onclick="exportCSV()">📄 Export CSV</button>
+          <button class="btn-primary" onclick="triggerPrint('partC')">🖨️ Print / Save PDF</button>
+        </div>
+      </div>
+      <p class="panel-subtitle">Current stock levels</p>
+      <div id="partCPrintMeta" class="print-only-meta"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Drink Name</th>
+              <th>Pack Type</th>
+              <th>BALANCE (CAGE)</th>
+              <th>TOPPED UP (FRIDGE)</th>
+              <th>Notes / Code</th>
+              <th class="no-print admin-col" style="display:none;">Edit</th>
+            </tr>
+          </thead>
+          <tbody id="balanceTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LOGS TAB -->
+    <section id="logsTab" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 id="logsPrintTitle" style="margin:0;">LOGS</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <select id="logTypeFilter" onchange="renderLogs()">
+            <option value="ALL">Category: All (CAGE &amp; FRIDGE TOP-UPS)</option>
+            <option value="FRIDGE TOP-UPS">Category: FRIDGE TOP-UPS</option>
+            <option value="CAGE">Category: CAGE</option>
+          </select>
+          <input type="date" id="logDateFilter" title="Filter by Date" onchange="renderLogs()" />
+          <button type="button" onclick="clearLogDateFilter()">All Dates</button>
+          <select id="logDrinkSort" onchange="renderLogs()">
+            <option value="NONE">Drink Order: Default</option>
+            <option value="AZ">Drink: A–Z</option>
+            <option value="ZA">Drink: Z–A</option>
+          </select>
+          <select id="logDateSort" onchange="renderLogs()">
+            <option value="NEW_OLD">Date: New–Old</option>
+            <option value="OLD_NEW">Date: Old–New</option>
+          </select>
+          <button onclick="exportCSV()">📄 Export CSV</button>
+          <button class="btn-primary" onclick="triggerPrint('logsTab')">🖨️ Print / Save PDF</button>
+        </div>
+      </div>
+      <div id="logsPrintMeta" class="print-only-meta"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Date / Time</th>
+              <th>Type</th>
+              <th>Drink Name</th>
+              <th>Qty</th>
+              <th>By</th>
+              <th class="no-print admin-col" style="display:none;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="logsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VALUE TAB (MONEY) -->
+    <section id="valueTab" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 id="valuePrintTitle" style="margin:0;">Stock &amp; Sales Value</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button onclick="renderValueTab()">🔄 Refresh</button>
+          <button class="btn-primary" onclick="triggerPrint('valueTab')">🖨️ Print / Save PDF</button>
+          <button class="btn-success" onclick="triggerPrint('fridaySummary')">🖨️ Print Friday Summary</button>
+        </div>
+      </div>
+      <p class="panel-subtitle">Selling price is $1.00 per bottle unless changed. Cost prices are entered by the mosque treasurer; blank means not recorded.</p>
+
+      <div class="period-group no-print" id="periodGroup">
+        <button data-period="today" onclick="setPeriod('today')">Today</button>
+        <button data-period="thisWeek" class="active" onclick="setPeriod('thisWeek')">This Week</button>
+        <button data-period="thisMonth" onclick="setPeriod('thisMonth')">This Month</button>
+        <button data-period="lastMonth" onclick="setPeriod('lastMonth')">Last Month</button>
+      </div>
+      <div class="no-print" style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;" id="periodLabel"></div>
+
+      <div class="disclaimer">
+        <strong>⚠️ Important:</strong> All figures are based on <b>recorded top-ups only</b>. Staff free drinks are not recorded and will cause stock to drift. For exact figures, do a monthly physical count and adjust in Part C.
+      </div>
+
+      <div id="valueSummary" class="summary-grid"></div>
+
+      <div class="top-sellers" id="topSellers"></div>
+
+      <div id="valuePrintMeta" class="print-only-meta"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Drink</th>
+              <th>Pack</th>
+              <th>Cage Qty</th>
+              <th>Fridge Qty</th>
+              <th>Est. Bottles</th>
+              <th>Cost / Carton</th>
+              <th>Sell / Bottle</th>
+              <th>Carton Value (Sell)</th>
+              <th class="admin-col no-print" style="display:none;">Price</th>
+            </tr>
+          </thead>
+          <tbody id="valueTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB -->
+    <section id="adminTab" class="tab-panel" style="display:none;">
+      <div class="card">
+        <h2 style="margin-top:0;">💾 Full System Backup &amp; Restore (.JSON)</h2>
+        <p style="color:var(--muted); font-size:0.88rem;">
+          Download a full <code>.json</code> backup of all drinks and logs, or restore from a saved <code>.json</code> file.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <button class="btn-primary" onclick="downloadBackupJSON()">⬇️ Download .JSON Backup</button>
+          <label class="btn-warning" style="padding:8px 12px; border-radius:8px; cursor:pointer; color:#111; margin:0;">
+            ⬆️ Restore from .JSON File
+            <input type="file" accept=".json" style="display:none;" onchange="restoreBackupJSON(event)" />
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">➕ Add New Drink to Master List</h2>
+        <div class="grid-4">
+          <div>
+            <label>Drink Name</label>
+            <input type="text" id="newDrinkName" class="w-100" placeholder="e.g. MILO CAN" />
+          </div>
+          <div>
+            <label>Pack Type</label>
+            <input type="text" id="newDrinkUnit" class="w-100" value="Carton" readonly />
+          </div>
+          <div>
+            <label>BALANCE (CAGE)</label>
+            <input type="number" id="newDrinkCageQty" class="w-100" value="0" min="0" step="any" />
+          </div>
+          <div>
+            <label>Notes / Code</label>
+            <input type="text" id="newDrinkNotes" class="w-100" placeholder="Optional remarks" />
+          </div>
+        </div>
+        <button class="btn-success" onclick="saveMasterDrink()">Add Drink</button>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Fridge &amp; Cage Digital Operations System &bull; Crafted by <span class="sig">dzul art</span>
+  </footer>
+</div>
+
+<!-- EDIT LOG MODAL (ADMIN) -->
+<div id="editModal" class="modal-backdrop">
+  <div class="modal">
+    <h3 style="margin-top:0;">✏️ Edit Log Entry (Admin)</h3>
+    <input type="hidden" id="editId" />
+    <div style="margin-bottom:10px;">
+      <label>Date (YYYY-MM-DD)</label>
+      <input type="date" id="editDate" class="w-100" />
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Type</label>
+      <select id="editType" class="w-100">
+        <option value="FRIDGE TOP-UPS">FRIDGE TOP-UPS</option>
+        <option value="CAGE">CAGE</option>
+      </select>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Drink</label>
+      <select id="editDrink" class="w-100"></select>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Qty (Carton)</label>
+      <input type="text" id="editQty" class="w-100" />
+    </div>
+    <div style="margin-bottom:14px;">
+      <label>Updated By</label>
+      <select id="editOfficer" class="w-100">
+        <option value="Ops Team">Ops Team</option>
+        <option value="Admin">Admin</option>
+        <option value="Dzul">Dzul</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button onclick="closeEditModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitEdit()">Update Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINE-TUNE BALANCE MODAL (ADMIN) -->
+<div id="drinkModal" class="modal-backdrop">
+  <div class="modal">
+    <h3 style="margin-top:0;">🎛️ Fine-Tune Balance (Admin)</h3>
+    <input type="hidden" id="tuneDrinkId" />
+    <div style="margin-bottom:10px;">
+      <label>Drink Name</label>
+      <input type="text" id="tuneDrinkName" class="w-100" />
+    </div>
+    <div class="grid-2" style="margin-bottom:10px;">
+      <div>
+        <label>BALANCE (CAGE)</label>
+        <input type="number" id="tuneCageQty" class="w-100" min="0" step="any" />
+      </div>
+      <div>
+        <label>TOPPED UP (FRIDGE)</label>
+        <input type="number" id="tuneFridgeQty" class="w-100" min="0" step="any" />
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label>Notes / Code (e.g. spoilt / expired remarks)</label>
+      <input type="text" id="tuneNotes" class="w-100" />
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button onclick="closeDrinkModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitDrinkTune()">Save Balance</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE MODAL (VALUE EDITION) -->
+<div id="priceModal" class="modal-backdrop">
+  <div class="modal">
+    <h3 style="margin-top:0;">💰 Set Prices (Admin)</h3>
+    <input type="hidden" id="priceDrinkId" />
+    <div style="margin-bottom:10px;">
+      <label>Drink</label>
+      <input type="text" id="priceDrinkName" class="w-100" readonly />
+    </div>
+    <div class="grid-2" style="margin-bottom:10px;">
+      <div>
+        <label>Pack Size (bottles per carton)</label>
+        <input type="number" id="pricePackSize" class="w-100" min="1" step="1" value="24" />
+      </div>
+      <div>
+        <label>Cost per Carton ($) — blank = not recorded</label>
+        <input type="number" id="priceCost" class="w-100" step="0.01" min="0" placeholder="blank = N/A" />
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:10px;">
+      <div>
+        <label>Sell per Bottle ($)</label>
+        <input type="number" id="priceSell" class="w-100" step="0.01" min="0" value="1.00" />
+      </div>
+      <div>
+        <label>Staff take free?</label>
+        <select id="priceStaffFree" class="w-100">
+          <option value="no">No — paying customers only</option>
+          <option value="yes">Yes — staff free (not tallied in sales)</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px; font-size:0.78rem; color:var(--muted);">
+      <b>Carton value (sell):</b> <span id="priceCartonValueHint">$24.00</span>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button onclick="closePriceModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitPriceModal()">Save Prices</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ⚠️ DO NOT rename movement_type strings ("FRIDGE TOP-UPS", "CAGE"),
+     API paths (/api/...), JSON keys, or localStorage keys (ops_*).
+     These are tied to the Cloudflare Worker + Supabase schema. -->
+<script>
+  const DEFAULT_WORKER_URL = "https://drinks.dzul1234.workers.dev";
+  const DEFAULT_ROW_COUNT = 10;
+  const PRICE_KEY = "ops_prices_v1";
+  const DEFAULT_SELL = 1.00;
+  const DEFAULT_PACK_SIZE = 24;
+
+  let state = { role: null, drinks: [], movements: [] };
+  let passcode = sessionStorage.getItem("ops_pass") || "";
+  let workerUrl = localStorage.getItem("ops_worker_url") || DEFAULT_WORKER_URL;
+  let currentPeriod = "thisWeek";
+
+  const SHORT_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // ---- Price helpers (client-side only) ----
+  function getPriceMap() {
+    try {
+      return JSON.parse(localStorage.getItem(PRICE_KEY) || "{}") || {};
+    } catch { return {}; }
+  }
+  function savePriceMap(map) {
+    localStorage.setItem(PRICE_KEY, JSON.stringify(map));
+  }
+  function getPriceEntry(drinkId) {
+    const p = getPriceMap()[drinkId] || {};
+    return {
+      packSize: (typeof p.packSize === "number" && p.packSize > 0) ? p.packSize : DEFAULT_PACK_SIZE,
+      cost: (typeof p.cost === "number") ? p.cost : null,
+      sell: (typeof p.sell === "number") ? p.sell : DEFAULT_SELL,
+      staffFree: p.staffFree === true,
+    };
+  }
+  function setPriceEntry(drinkId, entry) {
+    const m = getPriceMap();
+    m[drinkId] = entry;
+    savePriceMap(m);
+  }
+  function money(n) {
+    if (n === null || n === undefined || isNaN(n)) return "N/A";
+    return "$" + Number(n).toFixed(2);
+  }
+  function cartonSellValue(drinkId) {
+    const e = getPriceEntry(drinkId);
+    return e.packSize * e.sell;
+  }
+  function parseQty(t) {
+    if (!t) return 0;
+    const s = String(t).toLowerCase().replace(/\s/g, "");
+    const m = s.match(/^(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/);
+    if (!m) {
+      const n = parseFloat(s);
+      return isNaN(n) ? 0 : n;
+    }
+    const a = parseFloat(m[1]);
+    const b = m[2] ? parseFloat(m[2]) : 1;
+    return a * b;
+  }
+
+  // ---- Date helpers ----
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => (t.style.display = "none"), 2800);
+  }
+  function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("ops_theme", theme);
+    document.querySelectorAll("[data-set-theme]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.setTheme === theme);
+    });
+  }
+  function formatNowCustom(dateObj = new Date()) {
+    const ddd = SHORT_DAYS[dateObj.getDay()];
+    const dd = String(dateObj.getDate()).padStart(2, "0");
+    const mmm = MONTHS[dateObj.getMonth()];
+    const yyyy = dateObj.getFullYear();
+    const hh = String(dateObj.getHours()).padStart(2, "0");
+    const mm = String(dateObj.getMinutes()).padStart(2, "0");
+    return `${ddd}, ${dd} ${mmm} ${yyyy}, ${hh}:${mm} hrs`;
+  }
+  function formatPrintStamp(dateInput = new Date()) {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    if (isNaN(d.getTime())) return String(dateInput || "");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mmm = MONTHS[d.getMonth()];
+    const yyyy = d.getFullYear();
+    let hours = d.getHours();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const hh = String(hours).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return `${dd} ${mmm} ${yyyy}, ${hh}:${mm} ${ampm}`;
+  }
+  function formatAsOfDate(dateInput = new Date()) {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    if (isNaN(d.getTime())) return String(dateInput || "");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mmm = MONTHS[d.getMonth()];
+    const yyyy = d.getFullYear();
+    return `${dd} ${mmm} ${yyyy}`;
+  }
+  function getISOKey(dateObj = new Date()) {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const d = String(dateObj.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  function extractDayAndISODate(labelText) {
+    const now = new Date();
+    const fallbackISO = getISOKey(now);
+    const fallbackDay = SHORT_DAYS[now.getDay()];
+    if (!labelText) return { day: fallbackDay, isoDate: fallbackISO };
+    const dayMatch = labelText.match(/\b(Sun|Mon|Tue|Wed|Thu|Fri|Sat)\b/i);
+    const day = dayMatch ? dayMatch[1][0].toUpperCase() + dayMatch[1].slice(1, 3).toLowerCase() : fallbackDay;
+    const dateMatch = labelText.match(/\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})\b/i);
+    if (!dateMatch) return { day, isoDate: fallbackISO };
+    const dd = String(dateMatch[1]).padStart(2, "0");
+    const monthIdx = MONTHS.findIndex((m) => m.toLowerCase() === dateMatch[2].toLowerCase());
+    const yyyy = dateMatch[3];
+    const isoDate = monthIdx >= 0 ? `${yyyy}-${String(monthIdx + 1).padStart(2, "0")}-${dd}` : fallbackISO;
+    return { day, isoDate };
+  }
+  function initDateTimeFields() {
+    const formatted = formatNowCustom(new Date());
+    document.getElementById("fridgeDateTime").value = formatted;
+    document.getElementById("cageDateTime").value = formatted;
+  }
+  function checkMidnightAutoClear() {
+    const todayISO = getISOKey(new Date());
+    const lastDayISO = localStorage.getItem("ops_last_active_day");
+    if (lastDayISO && lastDayISO !== todayISO) {
+      localStorage.removeItem("ops_draft_FRIDGE TOP-UPS");
+      localStorage.removeItem("ops_draft_CAGE");
+      initDateTimeFields();
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+      renderWorkingRows("cageRows", "CAGE");
+      showToast("🕛 Past midnight — working form auto-cleared for new day!");
+    }
+    localStorage.setItem("ops_last_active_day", todayISO);
+  }
+
+  // ---- Period range helper (calendar week/month) ----
+  function getPeriodRange(period) {
+    const now = new Date();
+    const todayISO = getISOKey(now);
+
+    if (period === "today") {
+      return { from: todayISO, to: todayISO, label: "Today" };
+    }
+    if (period === "thisWeek") {
+      // Calendar week: Monday to Sunday
+      const d = new Date(now);
+      const day = d.getDay(); // 0=Sun, 1=Mon...
+      const diffToMonday = (day === 0 ? -6 : 1 - day);
+      const monday = new Date(d);
+      monday.setDate(d.getDate() + diffToMonday);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return {
+        from: getISOKey(monday),
+        to: getISOKey(sunday),
+        label: `This Week (${formatAsOfDate(monday)} – ${formatAsOfDate(sunday)})`,
+      };
+    }
+    if (period === "thisMonth") {
+      const first = new Date(now.getFullYear(), now.getMonth(), 1);
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      return {
+        from: getISOKey(first),
+        to: getISOKey(last),
+        label: `This Month (${formatAsOfDate(first)} – ${formatAsOfDate(last)})`,
+      };
+    }
+    if (period === "lastMonth") {
+      const first = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const last = new Date(now.getFullYear(), now.getMonth(), 0);
+      return {
+        from: getISOKey(first),
+        to: getISOKey(last),
+        label: `Last Month (${formatAsOfDate(first)} – ${formatAsOfDate(last)})`,
+      };
+    }
+    return { from: todayISO, to: todayISO, label: "Today" };
+  }
+  function setPeriod(period) {
+    currentPeriod = period;
+    document.querySelectorAll("#periodGroup button").forEach((b) => {
+      b.classList.toggle("active", b.dataset.period === period);
+    });
+    renderValueTab();
+  }
+
+  async function api(path, options = {}) {
+    const cleanBase = (workerUrl || DEFAULT_WORKER_URL).replace(/\/+$/, "");
+    const res = await fetch(`${cleanBase}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "X-App-Password": passcode,
+        ...(options.headers || {}),
+      },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Request failed");
+    return data;
+  }
+
+  async function login() {
+    const passInput = document.getElementById("passcodeInput").value.trim();
+    const errEl = document.getElementById("loginError");
+    errEl.textContent = "";
+    if (!passInput) {
+      errEl.textContent = "Please enter your passcode.";
+      return;
+    }
+    workerUrl = localStorage.getItem("ops_worker_url") || DEFAULT_WORKER_URL;
+    passcode = passInput;
+    try {
+      const res = await api("/api/login", { method: "POST" });
+      sessionStorage.setItem("ops_pass", passcode);
+      state.role = res.role;
+      enterApp();
+    } catch (e) {
+      errEl.textContent = "❌ " + e.message;
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem("ops_pass");
+    passcode = "";
+    state.role = null;
+    document.getElementById("appScreen").style.display = "none";
+    document.getElementById("loginScreen").style.display = "block";
+    document.getElementById("roleBadge").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "none";
+  }
+
+  async function enterApp() {
+    checkMidnightAutoClear();
+    initDateTimeFields();
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("appScreen").style.display = "block";
+
+    const badge = document.getElementById("roleBadge");
+    badge.style.display = "inline-block";
+    badge.textContent = state.role === "ADMIN" ? "👑 ADMIN MODE" : "👷 OPS MODE";
+    badge.className = "badge " + (state.role === "ADMIN" ? "admin" : "ops");
+    document.getElementById("logoutBtn").style.display = "inline-block";
+
+    const isAdmin = state.role === "ADMIN";
+    document.getElementById("adminTabBtn").style.display = isAdmin ? "inline-block" : "none";
+    document.querySelectorAll(".admin-col").forEach((el) => {
+      el.style.display = isAdmin ? "table-cell" : "none";
+    });
+
+    await loadState();
+    renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+    renderWorkingRows("cageRows", "CAGE");
+  }
+
+  async function loadState() {
+    try {
+      const data = await api("/api/state");
+      state.drinks = data.drinks || [];
+      state.movements = data.movements || [];
+      updatePrintHeaders();
+      renderBalances();
+      renderLogs();
+      renderValueTab();
+      populateEditDrinkDropdown();
+    } catch (e) {
+      showToast("Error loading data: " + e.message);
+    }
+  }
+
+  function getLatestMovementDate() {
+    if (!state.movements || state.movements.length === 0) return new Date();
+    const latest = state.movements[0];
+    if (latest.created_at) return new Date(latest.created_at);
+    if (latest.entry_date) return new Date(latest.entry_date + "T00:00:00");
+    return new Date();
+  }
+
+  function updatePrintHeaders() {
+    const latestDate = getLatestMovementDate();
+    const asOfStr = formatAsOfDate(latestDate);
+    const titleEl = document.getElementById("partCPrintTitle");
+    if (titleEl) titleEl.textContent = `Fridge & Cage Drink Ops as of ${asOfStr}`;
+    const partCMeta = document.getElementById("partCPrintMeta");
+    if (partCMeta) partCMeta.textContent = `Last Updated: ${formatPrintStamp(latestDate)}`;
+  }
+
+  function triggerPrint(mode) {
+    const nowStamp = formatPrintStamp(new Date());
+    if (mode === "logsTab") {
+      const cat = document.getElementById("logTypeFilter")?.value || "ALL";
+      const dt = document.getElementById("logDateFilter")?.value || "All Dates";
+      const logsMeta = document.getElementById("logsPrintMeta");
+      if (logsMeta) logsMeta.textContent = `Generated: ${nowStamp} | Category: ${cat} | Date Filter: ${dt}`;
+    } else if (mode === "valueTab") {
+      const meta = document.getElementById("valuePrintMeta");
+      if (meta) {
+        const range = getPeriodRange(currentPeriod);
+        meta.textContent = `Period: ${range.label} | Generated: ${nowStamp} | Selling price default $${DEFAULT_SELL.toFixed(2)}`;
+      }
+      updatePrintHeaders();
+    } else if (mode === "fridaySummary") {
+      const meta = document.getElementById("valuePrintMeta");
+      if (meta) {
+        const range = getPeriodRange("thisWeek");
+        meta.textContent = `FRIDAY SUMMARY | Week: ${range.label} | Generated: ${nowStamp}`;
+      }
+    } else {
+      updatePrintHeaders();
+    }
+    window.print();
+  }
+
+  function getSortedActiveDrinks(order = "AZ") {
+    return state.drinks
+      .filter((d) => d.is_active !== false)
+      .slice()
+      .sort((a, b) => {
+        const cmp = a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+        return order === "ZA" ? -cmp : cmp;
+      });
+  }
+
+  function buildDrinkOptionsHTML(selectedId = "") {
+    const activeDrinks = getSortedActiveDrinks("AZ");
+    let html = `<option value="">-- Select Drink (A–Z) --</option>`;
+    for (const d of activeDrinks) {
+      const sel = d.id === selectedId ? "selected" : "";
+      html += `<option value="${d.id}" ${sel}>${d.name} [Cage: ${d.cage_qty} Carton]</option>`;
+    }
+    html += `<option value="__NEW__" ${selectedId === "__NEW__" ? "selected" : ""}>➕ Other / New Drink (Type Name)</option>`;
+    return html;
+  }
+
+  function makeEmptyRows(count = DEFAULT_ROW_COUNT) {
+    return Array.from({ length: count }, () => ({
+      drink_id: "",
+      custom_drink_name: "",
+      qty_text: "",
+      notes: "",
+      submitted_qty: "",
+    }));
+  }
+
+  function getDraft(movementType) {
+    try {
+      const raw = localStorage.getItem(`ops_draft_${movementType}`);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch {}
+    return makeEmptyRows(DEFAULT_ROW_COUNT);
+  }
+
+  function saveDraft(movementType, rowsData) {
+    localStorage.setItem(`ops_draft_${movementType}`, JSON.stringify(rowsData));
+  }
+
+  function collectRowsFromDOM(containerId) {
+    const rows = [];
+    document.querySelectorAll(`#${containerId} .entry-row`).forEach((r) => {
+      rows.push({
+        drink_id: r.querySelector(".drink-select").value,
+        custom_drink_name: r.querySelector(".custom-drink-input").value,
+        qty_text: r.querySelector(".qty-input").value,
+        notes: r.querySelector(".note-input").value,
+        submitted_qty: r.dataset.submittedQty || "",
+      });
+    });
+    return rows;
+  }
+
+  function renderWorkingRows(containerId, movementType) {
+    const container = document.getElementById(containerId);
+    const items = getDraft(movementType);
+    container.innerHTML = "";
+
+    items.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "entry-row";
+      row.dataset.submittedQty = item.submitted_qty || "";
+      const isNew = item.drink_id === "__NEW__";
+      const hasSubmitted = Boolean(item.submitted_qty);
+
+      row.innerHTML = `
+        <div class="drink-col">
+          <select class="w-100 drink-select" onchange="toggleCustomDrink(this); persistDraft('${containerId}','${movementType}')">
+            ${buildDrinkOptionsHTML(item.drink_id)}
+          </select>
+          <input type="text" class="w-100 custom-drink-input" placeholder="Type new drink name..."
+            value="${item.custom_drink_name || ""}"
+            style="display:${isNew ? "block" : "none"}; margin-top:6px;"
+            oninput="persistDraft('${containerId}','${movementType}')" />
+          <div class="row-meta">
+            ${hasSubmitted ? `<span class="badge synced">Logged: ${item.submitted_qty} Carton</span>` : `<span>Ready</span>`}
+          </div>
+        </div>
+        <div>
+          <input type="text" class="w-100 qty-input" placeholder="Carton qty (e.g. 1 or 12x2)"
+            value="${item.qty_text || ""}"
+            oninput="persistDraft('${containerId}','${movementType}')" />
+        </div>
+        <div>
+          <input type="text" class="w-100 note-input" placeholder="Remarks (optional)"
+            value="${item.notes || ""}"
+            oninput="persistDraft('${containerId}','${movementType}')" />
+        </div>
+        <div>
+          <button type="button" class="btn-danger btn-sm" onclick="removeDraftRow(this, '${containerId}', '${movementType}')">✕</button>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function persistDraft(containerId, movementType) {
+    saveDraft(movementType, collectRowsFromDOM(containerId));
+  }
+  function addEntryRow(containerId, movementType) {
+    const current = collectRowsFromDOM(containerId);
+    current.push({ drink_id: "", custom_drink_name: "", qty_text: "", notes: "", submitted_qty: "" });
+    saveDraft(movementType, current);
+    renderWorkingRows(containerId, movementType);
+  }
+  function removeDraftRow(btn, containerId, movementType) {
+    btn.closest(".entry-row").remove();
+    const remaining = collectRowsFromDOM(containerId);
+    saveDraft(movementType, remaining.length ? remaining : makeEmptyRows(DEFAULT_ROW_COUNT));
+    renderWorkingRows(containerId, movementType);
+  }
+  function toggleCustomDrink(selectEl) {
+    const customInput = selectEl.parentElement.querySelector(".custom-drink-input");
+    customInput.style.display = selectEl.value === "__NEW__" ? "block" : "none";
+  }
+  function clearWorkingForm(movementType) {
+    localStorage.removeItem(`ops_draft_${movementType}`);
+    initDateTimeFields();
+    if (movementType === "FRIDGE TOP-UPS") {
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+    } else {
+      renderWorkingRows("cageRows", "CAGE");
+    }
+    showToast("🧹 Working form cleared (10 rows ready)!");
+  }
+
+  async function updateRecords(movementType) {
+    const isFridge = movementType === "FRIDGE TOP-UPS";
+    const containerId = isFridge ? "fridgeRows" : "cageRows";
+    const dtLabel = document.getElementById(isFridge ? "fridgeDateTime" : "cageDateTime").value.trim() || formatNowCustom(new Date());
+    const officer = document.getElementById(isFridge ? "fridgeOfficer" : "cageOfficer").value;
+    const { day, isoDate } = extractDayAndISODate(dtLabel);
+
+    const domRows = Array.from(document.querySelectorAll(`#${containerId} .entry-row`));
+    const itemsToSend = [];
+    const targetRowIndices = [];
+
+    domRows.forEach((r, idx) => {
+      const drink_id = r.querySelector(".drink-select").value;
+      const custom_drink_name = r.querySelector(".custom-drink-input").value.trim();
+      const qty_text = r.querySelector(".qty-input").value.trim();
+      const notes = r.querySelector(".note-input").value.trim();
+      const alreadySubmittedQty = (r.dataset.submittedQty || "").trim();
+
+      if (drink_id && qty_text && qty_text !== alreadySubmittedQty) {
+        itemsToSend.push({
+          entry_date: isoDate,
+          entry_datetime_label: dtLabel,
+          day_name: day,
+          shift: "Auto",
+          movement_type: movementType,
+          drink_id,
+          custom_drink_name,
+          qty_text,
+          officer,
+          notes,
+        });
+        targetRowIndices.push({ idx, qty_text });
+      }
+    });
+
+    if (itemsToSend.length === 0) {
+      showToast("ℹ️ No new or changed quantities to update.");
+      return;
+    }
+
+    try {
+      await api("/api/movements", {
+        method: "POST",
+        body: JSON.stringify({ items: itemsToSend }),
+      });
+      const draft = collectRowsFromDOM(containerId);
+      targetRowIndices.forEach(({ idx, qty_text }) => {
+        if (draft[idx]) draft[idx].submitted_qty = qty_text;
+      });
+      saveDraft(movementType, draft);
+      showToast(`✅ Updated ${itemsToSend.length} record(s) for ${isFridge ? "FRIDGE" : "CAGE"}!`);
+      await loadState();
+      renderWorkingRows(containerId, movementType);
+    } catch (e) {
+      showToast("❌ Update failed: " + e.message);
+    }
+  }
+
+  function getFilteredSortedLogs() {
+    const typeFilter = document.getElementById("logTypeFilter")?.value || "ALL";
+    const dateFilter = document.getElementById("logDateFilter")?.value || "";
+    const drinkSort = document.getElementById("logDrinkSort")?.value || "NONE";
+    const dateSort = document.getElementById("logDateSort")?.value || "NEW_OLD";
+
+    let list = (state.movements || []).filter((m) => {
+      const norm = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN" ? "CAGE" : "FRIDGE TOP-UPS";
+      const matchType = typeFilter === "ALL" || norm === typeFilter;
+      const matchDate = !dateFilter || String(m.entry_date || "") === dateFilter;
+      return matchType && matchDate;
+    });
+
+    return list.slice().sort((a, b) => {
+      const nameA = String(a.drink_name || "");
+      const nameB = String(b.drink_name || "");
+      if (drinkSort === "AZ") {
+        const c = nameA.localeCompare(nameB, undefined, { sensitivity: "base" });
+        if (c !== 0) return c;
+      } else if (drinkSort === "ZA") {
+        const c = nameB.localeCompare(nameA, undefined, { sensitivity: "base" });
+        if (c !== 0) return c;
+      }
+      const dateA = String(a.entry_date || "");
+      const dateB = String(b.entry_date || "");
+      const dateCmp = dateA.localeCompare(dateB);
+      if (dateCmp !== 0) return dateSort === "OLD_NEW" ? dateCmp : -dateCmp;
+      return dateSort === "OLD_NEW" ? Number(a.id || 0) - Number(b.id || 0) : Number(b.id || 0) - Number(a.id || 0);
+    });
+  }
+
+  function clearLogDateFilter() {
+    const el = document.getElementById("logDateFilter");
+    if (el) el.value = "";
+    renderLogs();
+  }
+
+  function renderBalances() {
+    const order = document.getElementById("balanceSort")?.value || "AZ";
+    const tbody = document.getElementById("balanceTableBody");
+    tbody.innerHTML = "";
+    const isAdmin = state.role === "ADMIN";
+    const list = getSortedActiveDrinks(order);
+
+    list.forEach((d, idx) => {
+      const cageClass = Number(d.cage_qty) <= 1 ? "low-stock" : "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td><b>${d.name}</b> ${d.is_new ? '<span class="badge">NEW</span>' : ""}</td>
+        <td>Carton</td>
+        <td class="${cageClass}">${d.cage_qty}</td>
+        <td>${d.fridge_qty}</td>
+        <td style="color:var(--muted);">${d.notes || ""}</td>
+        <td class="no-print" style="display:${isAdmin ? "table-cell" : "none"};">
+          <button class="btn-sm" onclick="openDrinkModal('${d.id}')">✏️ Edit</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderLogs() {
+    const tbody = document.getElementById("logsTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    const isAdmin = state.role === "ADMIN";
+    const list = getFilteredSortedLogs();
+
+    if (list.length === 0) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="${isAdmin ? 7 : 6}" style="text-align:center; color:var(--muted); padding:16px;">No log records match the current filter.</td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    list.forEach((m, idx) => {
+      const isCage = m.movement_type === "CAGE" || m.movement_type === "STOCK_IN";
+      const displayType = isCage ? "CAGE" : "FRIDGE TOP-UPS";
+      const displayDate = m.entry_datetime_label || m.entry_date || "-";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${displayDate}</td>
+        <td class="${isCage ? "tag-in" : "tag-out"}">${displayType}</td>
+        <td><b>${m.drink_name || "-"}</b></td>
+        <td>${m.qty_text || 0} Carton</td>
+        <td>${m.officer || "-"}</td>
+        <td class="no-print" style="display:${isAdmin ? "table-cell" : "none"};">
+          <button class="btn-sm" onclick="openEditModal(${m.id})">✏️ Edit</button>
+          <button class="btn-sm btn-danger" onclick="deleteMovement(${m.id})">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---- VALUE TAB RENDERER ----
+  function renderValueTab() {
+    const tbody = document.getElementById("valueTableBody");
+    const summary = document.getElementById("valueSummary");
+    const topEl = document.getElementById("topSellers");
+    const labelEl = document.getElementById("periodLabel");
+    if (!tbody || !summary) return;
+
+    const range = getPeriodRange(currentPeriod);
+    if (labelEl) labelEl.textContent = range.label;
+
+    const drinks = getSortedActiveDrinks("AZ");
+
+    // Filter movements to period
+    const periodMovements = (state.movements || []).filter((m) => {
+      const d = String(m.entry_date || "");
+      return d >= range.from && d <= range.to;
+    });
+
+    // Per-drink aggregates for period
+    const agg = {}; // drink_id -> { cartons, salesSell, salesCost, costKnown, packSize }
+    drinks.forEach((d) => {
+      agg[d.id] = { cartons: 0, salesSell: 0, salesCost: 0, costKnown: true };
+    });
+
+    periodMovements.forEach((m) => {
+      if (m.movement_type !== "FRIDGE TOP-UPS") return;
+      if (!agg[m.drink_id]) return; // unknown / custom drink
+      const qty = parseQty(m.qty_text);
+      const e = getPriceEntry(m.drink_id);
+      const cartonSell = e.packSize * e.sell;
+      agg[m.drink_id].cartons += qty;
+      agg[m.drink_id].salesSell += qty * cartonSell;
+      if (e.cost === null) {
+        agg[m.drink_id].costKnown = false;
+      } else {
+        agg[m.drink_id].salesCost += qty * e.cost;
+      }
+    });
+
+    // Totals
+    let totalSales = 0;
+    let totalCost = 0;
+    let costKnownAll = true;
+    Object.values(agg).forEach((a) => {
+      totalSales += a.salesSell;
+      if (!a.costKnown) costKnownAll = false; else totalCost += a.salesCost;
+    });
+
+    // Stock values (current snapshot, not period dependent)
+    let cageSell = 0, cageCost = 0, cageCostKnown = true;
+    let fridgeSell = 0, fridgeCost = 0, fridgeCostKnown = true;
+    let estBottles = 0;
+
+    // Rows
+    tbody.innerHTML = "";
+    drinks.forEach((d, idx) => {
+      const e = getPriceEntry(d.id);
+      const cartonSell = e.packSize * e.sell;
+      const cageQty = Number(d.cage_qty) || 0;
+      const fQty = Number(d.fridge_qty) || 0;
+      const rowCageSell = cageQty * cartonSell;
+      const rowCageCost = e.cost === null ? null : cageQty * e.cost;
+      const rowFridgeSell = fQty * cartonSell;
+      const rowFridgeCost = e.cost === null ? null : fQty * e.cost;
+
+      cageSell += rowCageSell;
+      if (rowCageCost === null) cageCostKnown = false; else cageCost += rowCageCost;
+      fridgeSell += rowFridgeSell;
+      if (rowFridgeCost === null) fridgeCostKnown = false; else fridgeCost += rowFridgeCost;
+      estBottles += (cageQty + fQty) * e.packSize;
+
+      const isAdmin = state.role === "ADMIN";
+      const staffBadge = e.staffFree ? '<span class="badge stafffree">STAFF-FREE</span>' : "";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td><b>${d.name}</b> ${staffBadge}</td>
+        <td>${e.packSize}-pack</td>
+        <td>${cageQty}</td>
+        <td>${fQty}</td>
+        <td>${(cageQty + fQty) * e.packSize}</td>
+        <td>${e.cost === null ? '<span style="color:#d97706;">not set</span>' : money(e.cost)}</td>
+        <td>${money(e.sell)}</td>
+        <td>${money(cartonSell)}</td>
+        <td class="no-print admin-col" style="display:${isAdmin ? "table-cell" : "none"};">
+          <button class="btn-sm" onclick="openPriceModal('${d.id}')">💰 Price</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Summary cards
+    summary.innerHTML = `
+      <div class="summary-card">
+        <div class="label">Cage Stock Value (Sell)</div>
+        <div class="value">${money(cageSell)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Cage Stock Value (Cost)</div>
+        <div class="value">${cageCostKnown ? money(cageCost) : "N/A"}</div>
+        ${!cageCostKnown ? '<div class="hint">Some costs not set</div>' : ""}
+      </div>
+      <div class="summary-card">
+        <div class="label">Fridge Stock Value (Sell)</div>
+        <div class="value">${money(fridgeSell)}</div>
+      </div>
+      <div class="summary-card highlight">
+        <div class="label">Sales (Sell) — ${range.label}</div>
+        <div class="value">${money(totalSales)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Cost of Goods — ${range.label}</div>
+        <div class="value">${costKnownAll ? money(totalCost) : "N/A"}</div>
+        ${!costKnownAll ? '<div class="hint">Some costs not set</div>' : ""}
+      </div>
+      <div class="summary-card">
+        <div class="label">Gross Margin — ${range.label}</div>
+        <div class="value">${costKnownAll ? money(totalSales - totalCost) : "N/A"}</div>
+      </div>
+      <div class="summary-card">
+        <div class="label">Est. Bottles (Cage + Fridge)</div>
+        <div class="value">${estBottles}</div>
+        <div class="hint">Based on pack size</div>
+      </div>
+    `;
+
+    // Top sellers (by cartons in period)
+    const ranked = drinks
+      .map((d) => ({ d, a: agg[d.id] || { cartons: 0, salesSell: 0 } }))
+      .filter((x) => x.a.cartons > 0)
+      .sort((x, y) => y.a.cartons - x.a.cartons)
+      .slice(0, 10);
+
+    if (ranked.length === 0) {
+      topEl.innerHTML = `<h3>🏆 Top Sellers — ${range.label}</h3><p class="muted">No FRIDGE TOP-UPS recorded in this period.</p>`;
+    } else {
+      topEl.innerHTML = `
+        <h3>🏆 Top Sellers — ${range.label}</h3>
+        <ol>
+          ${ranked.map((x) => `
+            <li>
+              <b>${x.d.name}</b> — ${x.a.cartons} carton(s)
+              <span class="muted">(${money(x.a.salesSell)})</span>
+            </li>
+          `).join("")}
+        </ol>
+      `;
+    }
+  }
+
+  function populateEditDrinkDropdown() {
+    const sel = document.getElementById("editDrink");
+    const sorted = getSortedActiveDrinks("AZ");
+    sel.innerHTML = sorted.map((d) => `<option value="${d.id}">${d.name}</option>`).join("");
+  }
+  function openEditModal(id) {
+    const rec = state.movements.find((m) => m.id === id);
+    if (!rec) return;
+    document.getElementById("editId").value = rec.id;
+    document.getElementById("editDate").value = rec.entry_date;
+    document.getElementById("editType").value =
+      rec.movement_type === "CAGE" || rec.movement_type === "STOCK_IN" ? "CAGE" : "FRIDGE TOP-UPS";
+    document.getElementById("editDrink").value = rec.drink_id;
+    document.getElementById("editQty").value = rec.qty_text;
+    document.getElementById("editOfficer").value = rec.officer || "Dzul";
+    document.getElementById("editModal").classList.add("open");
+  }
+  function closeEditModal() {
+    document.getElementById("editModal").classList.remove("open");
+  }
+  async function submitEdit() {
+    const id = document.getElementById("editId").value;
+    const entry_date = document.getElementById("editDate").value;
+    const d = new Date(entry_date + "T00:00:00");
+    const day_name = SHORT_DAYS[d.getDay()];
+    try {
+      await api(`/api/movements/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          entry_date,
+          day_name,
+          movement_type: document.getElementById("editType").value,
+          drink_id: document.getElementById("editDrink").value,
+          qty_text: document.getElementById("editQty").value,
+          officer: document.getElementById("editOfficer").value,
+        }),
+      });
+      closeEditModal();
+      showToast("✅ Log updated!");
+      await loadState();
+    } catch (e) {
+      showToast("❌ Update failed: " + e.message);
+    }
+  }
+  async function deleteMovement(id) {
+    if (!confirm("Delete this log entry?")) return;
+    try {
+      await api(`/api/movements/${id}`, { method: "DELETE" });
+      showToast("🗑️ Log deleted.");
+      await loadState();
+    } catch (e) {
+      showToast("❌ Delete failed: " + e.message);
+    }
+  }
+  function openDrinkModal(id) {
+    const d = state.drinks.find((item) => item.id === id);
+    if (!d) return;
+    document.getElementById("tuneDrinkId").value = d.id;
+    document.getElementById("tuneDrinkName").value = d.name;
+    document.getElementById("tuneCageQty").value = d.cage_qty;
+    document.getElementById("tuneFridgeQty").value = d.fridge_qty;
+    document.getElementById("tuneNotes").value = d.notes || "";
+    document.getElementById("drinkModal").classList.add("open");
+  }
+  function closeDrinkModal() {
+    document.getElementById("drinkModal").classList.remove("open");
+  }
+  async function submitDrinkTune() {
+    const id = document.getElementById("tuneDrinkId").value;
+    try {
+      await api(`/api/drinks/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: document.getElementById("tuneDrinkName").value.trim(),
+          cage_qty: document.getElementById("tuneCageQty").value,
+          fridge_qty: document.getElementById("tuneFridgeQty").value,
+          pack_unit: "Carton",
+          notes: document.getElementById("tuneNotes").value.trim(),
+        }),
+      });
+      closeDrinkModal();
+      showToast("✅ Balance saved!");
+      await loadState();
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+      renderWorkingRows("cageRows", "CAGE");
+    } catch (e) {
+      showToast("❌ Save failed: " + e.message);
+    }
+  }
+  async function saveMasterDrink() {
+    const name = document.getElementById("newDrinkName").value.trim();
+    if (!name) return showToast("⚠️ Enter a drink name.");
+    try {
+      await api("/api/drinks", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          pack_unit: "Carton",
+          cage_qty: document.getElementById("newDrinkCageQty").value,
+          notes: document.getElementById("newDrinkNotes").value.trim(),
+        }),
+      });
+      document.getElementById("newDrinkName").value = "";
+      document.getElementById("newDrinkNotes").value = "";
+      showToast("✅ Drink added!");
+      await loadState();
+      renderWorkingRows("fridgeRows", "FRIDGE TOP-UPS");
+      renderWorkingRows("cageRows", "CAGE");
+    } catch (e) {
+      showToast("❌ Error: " + e.message);
+    }
+  }
+
+  // ---- Price modal ----
+  function openPriceModal(drinkId) {
+    const d = state.drinks.find((x) => x.id === drinkId);
+    if (!d) return;
+    document.getElementById("priceDrinkId").value = d.id;
+    document.getElementById("priceDrinkName").value = d.name;
+    const e = getPriceEntry(d.id);
+    document.getElementById("pricePackSize").value = e.packSize;
+    document.getElementById("priceCost").value = e.cost === null ? "" : e.cost.toFixed(2);
+    document.getElementById("priceSell").value = e.sell.toFixed(2);
+    document.getElementById("priceStaffFree").value = e.staffFree ? "yes" : "no";
+    updatePriceCartonHint();
+    document.getElementById("priceModal").classList.add("open");
+  }
+  function closePriceModal() {
+    document.getElementById("priceModal").classList.remove("open");
+  }
+  function updatePriceCartonHint() {
+    const pack = Number(document.getElementById("pricePackSize").value) || 0;
+    const sell = Number(document.getElementById("priceSell").value) || 0;
+    document.getElementById("priceCartonValueHint").textContent = money(pack * sell);
+  }
+  function submitPriceModal() {
+    const id = document.getElementById("priceDrinkId").value;
+    const packSize = Number(document.getElementById("pricePackSize").value) || DEFAULT_PACK_SIZE;
+    const costRaw = document.getElementById("priceCost").value;
+    const sell = Number(document.getElementById("priceSell").value) || DEFAULT_SELL;
+    const staffFree = document.getElementById("priceStaffFree").value === "yes";
+    const cost = (costRaw === "" || costRaw === null) ? null : Number(costRaw);
+    setPriceEntry(id, { packSize, cost, sell, staffFree });
+    closePriceModal();
+    showToast("✅ Prices saved on this device!");
+    renderValueTab();
+    renderBalances();
+  }
+
+  function exportCSV() {
+    const headers = ["No", "Date/Time", "Type", "Drink Name", "Qty", "Pack Type", "By", "Notes"];
+    const rows = state.movements.map((m, i) => [
+      i + 1,
+      `"${(m.entry_datetime_label || m.entry_date).replace(/"/g, '""')}"`,
+      m.movement_type,
+      `"${(m.drink_name || "").replace(/"/g, '""')}"`,
+      `"${m.qty_text}"`,
+      "Carton",
+      `"${m.officer}"`,
+      `"${(m.notes || "").replace(/"/g, '""')}"`,
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `fridge_cage_logs_${getISOKey(new Date())}.csv`;
+    a.click();
+  }
+
+  async function downloadBackupJSON() {
+    try {
+      const backup = await api("/api/backup");
+      const payload = {
+        _meta: {
+          exported_at: new Date().toISOString(),
+          prices: getPriceMap(),
+        },
+        ...backup,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `dzul_art_backup_${getISOKey(new Date())}.json`;
+      a.click();
+      showToast("⬇️ .JSON backup downloaded (includes prices)!");
+    } catch (e) {
+      showToast("❌ Backup failed: " + e.message);
+    }
+  }
+
+  async function restoreBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!confirm("Restore from this .JSON backup? This will replace current logs.")) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (parsed._meta && parsed._meta.prices) {
+        savePriceMap(parsed._meta.prices);
+      }
+      const body = { ...parsed };
+      delete body._meta;
+      await api("/api/restore", { method: "POST", body: JSON.stringify(body) });
+      showToast("✅ Backup restored!");
+      await loadState();
+    } catch (e) {
+      showToast("❌ Restore failed: " + e.message);
+    }
+  }
+
+  function switchTab(tabId, btn) {
+    checkMidnightAutoClear();
+    document.querySelectorAll(".tab-panel").forEach((p) => (p.style.display = "none"));
+    document.getElementById(tabId).style.display = "block";
+    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    if (tabId === "valueTab") renderValueTab();
+  }
+
+  // Init
+  setTheme(localStorage.getItem("ops_theme") || "dim");
+  initDateTimeFields();
+  if (passcode) {
+    document.getElementById("passcodeInput").value = passcode;
+    login();
+  }
+
+  // Live hint update in price modal
+  document.addEventListener("input", (ev) => {
+    if (ev.target && (ev.target.id === "pricePackSize" || ev.target.id === "priceSell")) {
+      updatePriceCartonHint();
+    }
+  });
+</script>
+</body>
+</html>
