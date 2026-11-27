@@ -3,49 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fridge & Cage Drink Ops — VALUE Edition</title>
+  <title>DRINKS</title>
   <style>
     :root {
-      --bg: #f4f6f9;
+      --bg: #ecfdf5;
       --surface: #ffffff;
-      --surface-2: #eef2f6;
-      --text: #18202c;
-      --muted: #5b6777;
-      --border: #d5dce4;
-      --primary: #1d4ed8;
-      --primary-hover: #1e40af;
+      --surface-2: #d1fae5;
+      --text: #064e3b;
+      --muted: #047857;
+      --border: #a7f3d0;
+      --primary: #0f766e;
+      --primary-hover: #115e59;
       --success: #15803d;
       --warning: #d97706;
       --danger: #b91c1c;
-      --shadow: 0 2px 10px rgba(0,0,0,0.06);
+      --shadow: 0 2px 10px rgba(15,118,110,0.08);
     }
     [data-theme="dim"] {
-      --bg: #1e242d;
-      --surface: #272f3b;
-      --surface-2: #313b4a;
-      --text: #e6ecf5;
-      --muted: #9aa7b8;
-      --border: #3d4859;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --success: #15803d;
+      --bg: #162629;
+      --surface: #1f3337;
+      --surface-2: #294247;
+      --text: #e6f4f1;
+      --muted: #94b8b2;
+      --border: #38585e;
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --success: #16a34a;
       --warning: #f59e0b;
       --danger: #dc2626;
-      --shadow: 0 4px 14px rgba(0,0,0,0.25);
+      --shadow: 0 4px 14px rgba(0,0,0,0.28);
     }
     [data-theme="dark"] {
-      --bg: #0c0f14;
-      --surface: #151a22;
-      --surface-2: #1e2530;
-      --text: #f1f5f9;
-      --muted: #8b98a9;
-      --border: #2a3342;
-      --primary: #2563eb;
-      --primary-hover: #3b82f6;
-      --success: #15803d;
+      --bg: #091316;
+      --surface: #111f24;
+      --surface-2: #182b32;
+      --text: #f0fdf9;
+      --muted: #7fa3ab;
+      --border: #233e47;
+      --primary: #14b8a6;
+      --primary-hover: #2dd4bf;
+      --success: #16a34a;
       --warning: #f59e0b;
       --danger: #dc2626;
-      --shadow: 0 4px 18px rgba(0,0,0,0.5);
+      --shadow: 0 4px 18px rgba(0,0,0,0.55);
     }
 
     * { box-sizing: border-box; }
@@ -144,12 +144,63 @@
     .tag-in { color: #4ade80; font-weight: 700; }
     .tag-out { color: #60a5fa; font-weight: 700; }
     .low-stock { color: #f87171; font-weight: 700; }
+    tr.zero-stock-row td {
+      color: #f87171 !important;
+      font-weight: 800 !important;
+      background: rgba(220, 38, 38, 0.14) !important;
+    }
+    [data-theme="light"] tr.zero-stock-row td {
+      color: #b91c1c !important;
+      background: #fee2e2 !important;
+    }
+    tr.fridge-topup-row td {
+      color: #60a5fa !important;
+      font-weight: 700;
+      background: rgba(37, 99, 235, 0.14) !important;
+    }
+    [data-theme="light"] tr.fridge-topup-row td {
+      color: #1d4ed8 !important;
+      background: #dbeafe !important;
+    }
 
     .print-only-meta {
       display: none;
-      font-size: 0.82rem;
-      color: #333;
+      font-size: 0.84rem;
+      color: #222;
       margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .qr-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .qr-preview {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid #222;
+      text-align: center;
+      color: #111;
+      width: 240px;
+    }
+    .qr-preview img {
+      display: block;
+      margin: 0 auto 8px;
+      width: 190px;
+      height: 190px;
+    }
+    .qr-preview .qr-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+    }
+    .qr-preview .qr-sub {
+      font-size: 0.72rem;
+      color: #444;
+      margin-top: 2px;
     }
 
     .modal-backdrop {
@@ -174,7 +225,8 @@
     }
 
     @page {
-      margin: 12mm;
+      size: portrait;
+      margin: 6mm;
     }
 
     /* Period buttons */
@@ -232,7 +284,37 @@
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
       }
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 9.5px !important;
+        line-height: 1.2 !important;
+      }
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .topbar {
+        padding: 6px 10px !important;
+        margin-bottom: 6px !important;
+      }
+      .brand h1 { font-size: 0.92rem !important; }
+      .brand small { font-size: 0.68rem !important; }
+      .card {
+        padding: 8px 10px !important;
+        margin-bottom: 6px !important;
+      }
+      h2 { font-size: 0.88rem !important; margin: 0 0 4px !important; }
+      .panel-subtitle { font-size: 0.7rem !important; margin: 0 0 4px !important; }
+      .print-only-meta { font-size: 0.7rem !important; margin-bottom: 4px !important; }
+      table { font-size: 8px !important; width: 100% !important; }
+      th, td { padding: 2.5px 4px !important; border: 1px solid #666666 !important; }
+      footer { padding: 4px 0 0 !important; font-size: 0.68rem !important; }
       body, .container, .topbar, .card, .table-wrap, table, tr, th, td, footer {
         background: #ffffff !important;
         background-color: #ffffff !important;
@@ -243,12 +325,38 @@
       .topbar, .card {
         border: 1px solid #444444 !important;
       }
-      th, td {
-        border: 1px solid #666666 !important;
-      }
       th {
         background: #eeeeee !important;
         color: #000000 !important;
+      }
+      tr.fridge-topup-row td {
+        color: #1d4ed8 !important;
+        background: #dbeafe !important;
+        font-weight: 700 !important;
+      }
+      tr.zero-stock-row td {
+        color: #b91c1c !important;
+        background: #fee2e2 !important;
+        font-weight: 800 !important;
+      }
+      body.printing-qr .topbar,
+      body.printing-qr #appScreen > .tab-panel:not(#qrTab),
+      body.printing-qr footer {
+        display: none !important;
+      }
+      body.printing-qr #qrTab {
+        display: block !important;
+        border: none !important;
+        text-align: center;
+      }
+      body.printing-qr .qr-preview {
+        margin: 20px auto;
+        width: 300px;
+        padding: 20px;
+      }
+      body.printing-qr .qr-preview img {
+        width: 240px;
+        height: 240px;
       }
       .print-only-meta {
         display: block !important;
@@ -320,6 +428,7 @@
       <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (BALANCE)</button>
       <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
       <button class="tab-btn" onclick="switchTab('valueTab', this)">💰 VALUE</button>
+      <button class="tab-btn" onclick="switchTab('qrTab', this); initQR();">📱 CAGE QR</button>
       <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
     </div>
 
@@ -335,9 +444,14 @@
         <div>
           <label>Updated By</label>
           <select id="fridgeOfficer" class="w-100">
-            <option value="Ops Team">Ops Team</option>
             <option value="Admin">Admin</option>
-            <option value="Dzul" selected>Dzul</option>
+            <option value="Ammar">Ammar</option>
+            <option value="Aqil">Aqil</option>
+            <option value="Bakhtiar">Bakhtiar</option>
+            <option value="Dzul">Dzul</option>
+            <option value="Ops Team" selected>Ops Team</option>
+            <option value="Sheikh">Sheikh</option>
+            <option value="Syawal">Syawal</option>
           </select>
         </div>
       </div>
@@ -363,9 +477,14 @@
         <div>
           <label>Updated By</label>
           <select id="cageOfficer" class="w-100">
-            <option value="Ops Team">Ops Team</option>
             <option value="Admin">Admin</option>
-            <option value="Dzul" selected>Dzul</option>
+            <option value="Ammar">Ammar</option>
+            <option value="Aqil">Aqil</option>
+            <option value="Bakhtiar">Bakhtiar</option>
+            <option value="Dzul">Dzul</option>
+            <option value="Ops Team" selected>Ops Team</option>
+            <option value="Sheikh">Sheikh</option>
+            <option value="Syawal">Syawal</option>
           </select>
         </div>
       </div>
@@ -508,6 +627,31 @@
       </div>
     </section>
 
+    <!-- CAGE QR TAB -->
+    <section id="qrTab" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 style="margin:0;">📱 Cage QR Sticker</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn-primary" onclick="printQRSticker()">🖨️ Print QR for Cage</button>
+        </div>
+      </div>
+      <p class="panel-subtitle no-print">Scan with phone camera to open Fridge &amp; Cage Drink Ops directly.</p>
+      <div class="qr-box">
+        <div class="qr-preview" id="qrStickerCard">
+          <img id="cageQrImg" alt="Cage QR Code" />
+          <div class="qr-title">🧊 DRINKS OPS</div>
+          <div class="qr-sub">Scan to Update Fridge &amp; Cage Stock</div>
+        </div>
+        <div class="no-print" style="flex:1; min-width:240px;">
+          <label>App Link Encoded in QR</label>
+          <input type="text" id="qrUrlInput" class="w-100" oninput="updateQRImage(this.value)" />
+          <p style="color:var(--muted); font-size:0.82rem; margin-top:8px;">
+            Automatically uses your current page URL (or edit above if needed). Click <b>Print QR for Cage</b> to print and paste on the cage door.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- ADMIN TAB -->
     <section id="adminTab" class="tab-panel" style="display:none;">
       <div class="card">
@@ -581,9 +725,14 @@
     <div style="margin-bottom:14px;">
       <label>Updated By</label>
       <select id="editOfficer" class="w-100">
-        <option value="Ops Team">Ops Team</option>
         <option value="Admin">Admin</option>
+        <option value="Ammar">Ammar</option>
+        <option value="Aqil">Aqil</option>
+        <option value="Bakhtiar">Bakhtiar</option>
         <option value="Dzul">Dzul</option>
+        <option value="Ops Team">Ops Team</option>
+        <option value="Sheikh">Sheikh</option>
+        <option value="Syawal">Syawal</option>
       </select>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end;">
@@ -758,12 +907,9 @@
     const dd = String(d.getDate()).padStart(2, "0");
     const mmm = MONTHS[d.getMonth()];
     const yyyy = d.getFullYear();
-    let hours = d.getHours();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    const hh = String(hours).padStart(2, "0");
+    const hh = String(d.getHours()).padStart(2, "0");
     const mm = String(d.getMinutes()).padStart(2, "0");
-    return `${dd} ${mmm} ${yyyy}, ${hh}:${mm} ${ampm}`;
+    return `${dd} ${mmm} ${yyyy}, ${hh}:${mm}`;
   }
   function formatAsOfDate(dateInput = new Date()) {
     const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
@@ -947,21 +1093,24 @@
     }
   }
 
-  function getLatestMovementDate() {
-    if (!state.movements || state.movements.length === 0) return new Date();
+  function getLatestMovementInfo() {
+    if (!state.movements || state.movements.length === 0) {
+      return { date: new Date(), officer: document.getElementById("fridgeOfficer")?.value || "Ops Team" };
+    }
     const latest = state.movements[0];
-    if (latest.created_at) return new Date(latest.created_at);
-    if (latest.entry_date) return new Date(latest.entry_date + "T00:00:00");
-    return new Date();
+    let d = new Date();
+    if (latest.created_at) d = new Date(latest.created_at);
+    else if (latest.entry_date) d = new Date(latest.entry_date + "T00:00:00");
+    return { date: d, officer: latest.officer || "Ops Team" };
   }
 
   function updatePrintHeaders() {
-    const latestDate = getLatestMovementDate();
-    const asOfStr = formatAsOfDate(latestDate);
+    const { date: latestDate, officer } = getLatestMovementInfo();
+    const stampStr = formatPrintStamp(latestDate);
     const titleEl = document.getElementById("partCPrintTitle");
-    if (titleEl) titleEl.textContent = `Fridge & Cage Drink Ops as of ${asOfStr}`;
+    if (titleEl) titleEl.textContent = `Stock Balance Report — ${stampStr} (Updated by ${officer})`;
     const partCMeta = document.getElementById("partCPrintMeta");
-    if (partCMeta) partCMeta.textContent = `Last Updated: ${formatPrintStamp(latestDate)}`;
+    if (partCMeta) partCMeta.textContent = `Printed: ${formatPrintStamp(new Date())} | Last Updated: ${stampStr} by ${officer}`;
   }
 
   function triggerPrint(mode) {
@@ -1005,7 +1154,7 @@
     let html = `<option value="">-- Select Drink (A–Z) --</option>`;
     for (const d of activeDrinks) {
       const sel = d.id === selectedId ? "selected" : "";
-      html += `<option value="${d.id}" ${sel}>${d.name} [Cage: ${d.cage_qty} Carton]</option>`;
+      html += `<option value="${d.id}" ${sel}>${d.name}</option>`;
     }
     html += `<option value="__NEW__" ${selectedId === "__NEW__" ? "selected" : ""}>➕ Other / New Drink (Type Name)</option>`;
     return html;
@@ -1224,8 +1373,14 @@
     const list = getSortedActiveDrinks(order);
 
     list.forEach((d, idx) => {
-      const cageClass = Number(d.cage_qty) <= 1 ? "low-stock" : "";
+      const cageNum = Number(d.cage_qty);
+      const fridgeNum = Number(d.fridge_qty);
+      const isZero = cageNum === 0;
+      const hasFridgeTopup = fridgeNum > 0;
+      const cageClass = cageNum <= 1 ? "low-stock" : "";
       const tr = document.createElement("tr");
+      if (isZero) tr.className = "zero-stock-row";
+      else if (hasFridgeTopup) tr.className = "fridge-topup-row";
       tr.innerHTML = `
         <td>${idx + 1}</td>
         <td><b>${d.name}</b> ${d.is_new ? '<span class="badge">NEW</span>' : ""}</td>
@@ -1646,6 +1801,32 @@
     document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     if (tabId === "valueTab") renderValueTab();
+  }
+
+  function initQR() {
+    const input = document.getElementById("qrUrlInput");
+    if (!input) return;
+    if (!input.value) {
+      const currentUrl = window.location.href.startsWith("http")
+        ? window.location.href.split("#")[0]
+        : "https://drinks.dzul1234.workers.dev";
+      input.value = currentUrl;
+    }
+    updateQRImage(input.value);
+  }
+
+  function updateQRImage(urlText) {
+    const img = document.getElementById("cageQrImg");
+    if (!img) return;
+    const target = (urlText || "").trim() || window.location.href;
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encodeURIComponent(target)}`;
+  }
+
+  function printQRSticker() {
+    initQR();
+    document.body.classList.add("printing-qr");
+    window.print();
+    setTimeout(() => document.body.classList.remove("printing-qr"), 300);
   }
 
   // Init
