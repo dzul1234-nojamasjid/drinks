@@ -152,6 +152,15 @@
       color: #b91c1c !important;
       background: #fee2e2 !important;
     }
+    tr.fridge-topup-row td {
+      color: #60a5fa !important;
+      font-weight: 700;
+      background: rgba(37, 99, 235, 0.14) !important;
+    }
+    [data-theme="light"] tr.fridge-topup-row td {
+      color: #1d4ed8 !important;
+      background: #dbeafe !important;
+    }
 
     .print-only-meta {
       display: none;
@@ -215,13 +224,66 @@
     }
 
     @page {
-      margin: 12mm;
+      size: portrait;
+      margin: 6mm;
     }
 
     @media print {
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+      }
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .topbar {
+        padding: 6px 10px !important;
+        margin-bottom: 6px !important;
+      }
+      .brand h1 {
+        font-size: 0.95rem !important;
+      }
+      .brand small {
+        font-size: 0.7rem !important;
+      }
+      .card {
+        padding: 8px 10px !important;
+        margin-bottom: 6px !important;
+      }
+      h2 {
+        font-size: 0.9rem !important;
+        margin: 0 0 4px !important;
+      }
+      .panel-subtitle {
+        font-size: 0.72rem !important;
+        margin: 0 0 4px !important;
+      }
+      .print-only-meta {
+        font-size: 0.72rem !important;
+        margin-bottom: 4px !important;
+      }
+      table {
+        font-size: 8.5px !important;
+        width: 100% !important;
+      }
+      th, td {
+        padding: 3px 5px !important;
+        border: 1px solid #666666 !important;
+      }
+      footer {
+        padding: 4px 0 0 !important;
+        font-size: 0.7rem !important;
       }
       body, .container, .topbar, .card, .table-wrap, table, tr, th, td, footer {
         background: #ffffff !important;
@@ -233,12 +295,14 @@
       .topbar, .card {
         border: 1px solid #444444 !important;
       }
-      th, td {
-        border: 1px solid #666666 !important;
-      }
       th {
         background: #eeeeee !important;
         color: #000000 !important;
+      }
+      tr.fridge-topup-row td {
+        color: #1d4ed8 !important;
+        background: #dbeafe !important;
+        font-weight: 700 !important;
       }
       tr.zero-stock-row td {
         color: #b91c1c !important;
@@ -1088,10 +1152,13 @@
 
     list.forEach((d, idx) => {
       const cageNum = Number(d.cage_qty);
+      const fridgeNum = Number(d.fridge_qty);
       const isZero = cageNum === 0;
+      const hasFridgeTopup = fridgeNum > 0;
       const cageClass = cageNum <= 1 ? "low-stock" : "";
       const tr = document.createElement("tr");
       if (isZero) tr.className = "zero-stock-row";
+      else if (hasFridgeTopup) tr.className = "fridge-topup-row";
       tr.innerHTML = `
         <td>${idx + 1}</td>
         <td><b>${d.name}</b> ${d.is_new ? '<span class="badge">NEW</span>' : ""}</td>
