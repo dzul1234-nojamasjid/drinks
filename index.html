@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fridge & Cage Drink Ops</title>
+  <title>DRINKS</title>
   <style>
     :root {
       --bg: #f4f6f9;
@@ -143,12 +143,54 @@
     .tag-in { color: #4ade80; font-weight: 700; }
     .tag-out { color: #60a5fa; font-weight: 700; }
     .low-stock { color: #f87171; font-weight: 700; }
+    tr.zero-stock-row td {
+      color: #f87171 !important;
+      font-weight: 800 !important;
+      background: rgba(220, 38, 38, 0.12) !important;
+    }
+    [data-theme="light"] tr.zero-stock-row td {
+      color: #b91c1c !important;
+      background: #fee2e2 !important;
+    }
 
     .print-only-meta {
       display: none;
-      font-size: 0.82rem;
-      color: #333;
+      font-size: 0.85rem;
+      color: #222;
       margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .qr-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .qr-preview {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid #222;
+      text-align: center;
+      color: #111;
+      width: 240px;
+    }
+    .qr-preview img {
+      display: block;
+      margin: 0 auto 8px;
+      width: 190px;
+      height: 190px;
+    }
+    .qr-preview .qr-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+    }
+    .qr-preview .qr-sub {
+      font-size: 0.72rem;
+      color: #444;
+      margin-top: 2px;
     }
 
     .modal-backdrop {
@@ -197,6 +239,30 @@
       th {
         background: #eeeeee !important;
         color: #000000 !important;
+      }
+      tr.zero-stock-row td {
+        color: #b91c1c !important;
+        background: #fee2e2 !important;
+        font-weight: 800 !important;
+      }
+      body.printing-qr .topbar,
+      body.printing-qr #appScreen > .tab-panel:not(#qrTab),
+      body.printing-qr footer {
+        display: none !important;
+      }
+      body.printing-qr #qrTab {
+        display: block !important;
+        border: none !important;
+        text-align: center;
+      }
+      body.printing-qr .qr-preview {
+        margin: 20px auto;
+        width: 300px;
+        padding: 20px;
+      }
+      body.printing-qr .qr-preview img {
+        width: 240px;
+        height: 240px;
       }
       .print-only-meta {
         display: block !important;
@@ -256,6 +322,7 @@
       <button class="tab-btn" onclick="switchTab('partB', this)">🚚 PART B (CAGE)</button>
       <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (BALANCE)</button>
       <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
+      <button class="tab-btn" onclick="switchTab('qrTab', this); initQR();">📱 CAGE QR</button>
       <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
     </div>
 
@@ -271,14 +338,14 @@
         <div>
           <label>Updated By</label>
           <select id="fridgeOfficer" class="w-100">
-            <option value="Ops Team">Ops Team</option>
             <option value="Admin">Admin</option>
-            <option value="Dzul" selected>Dzul</option>
-            <option value="Aqil">Aqil</option>
-            <option value="Sheikh">Sheikh</option>
             <option value="Ammar">Ammar</option>
-            <option value="Syawal">Syawal</option>
+            <option value="Aqil">Aqil</option>
             <option value="Bakhtiar">Bakhtiar</option>
+            <option value="Dzul">Dzul</option>
+            <option value="Ops Team" selected>Ops Team</option>
+            <option value="Sheikh">Sheikh</option>
+            <option value="Syawal">Syawal</option>
           </select>
         </div>
       </div>
@@ -304,14 +371,14 @@
         <div>
           <label>Updated By</label>
           <select id="cageOfficer" class="w-100">
-            <option value="Ops Team">Ops Team</option>
             <option value="Admin">Admin</option>
-            <option value="Dzul" selected>Dzul</option>
-            <option value="Aqil">Aqil</option>
-            <option value="Sheikh">Sheikh</option>
             <option value="Ammar">Ammar</option>
-            <option value="Syawal">Syawal</option>
+            <option value="Aqil">Aqil</option>
             <option value="Bakhtiar">Bakhtiar</option>
+            <option value="Dzul">Dzul</option>
+            <option value="Ops Team" selected>Ops Team</option>
+            <option value="Sheikh">Sheikh</option>
+            <option value="Syawal">Syawal</option>
           </select>
         </div>
       </div>
@@ -403,6 +470,31 @@
       </div>
     </section>
 
+    <!-- CAGE QR TAB -->
+    <section id="qrTab" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 style="margin:0;">📱 Cage QR Sticker</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn-primary" onclick="printQRSticker()">🖨️ Print QR for Cage</button>
+        </div>
+      </div>
+      <p class="panel-subtitle no-print">Scan with phone camera to open Fridge &amp; Cage Drink Ops directly.</p>
+      <div class="qr-box">
+        <div class="qr-preview" id="qrStickerCard">
+          <img id="cageQrImg" alt="Cage QR Code" />
+          <div class="qr-title">🧊 DRINKS OPS</div>
+          <div class="qr-sub">Scan to Update Fridge &amp; Cage Stock</div>
+        </div>
+        <div class="no-print" style="flex:1; min-width:240px;">
+          <label>App Link Encoded in QR</label>
+          <input type="text" id="qrUrlInput" class="w-100" oninput="updateQRImage(this.value)" />
+          <p style="color:var(--muted); font-size:0.82rem; margin-top:8px;">
+            Automatically uses your current page URL (or edit above if needed). Click <b>Print QR for Cage</b> to print and paste on the cage door.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- ADMIN TAB -->
     <section id="adminTab" class="tab-panel" style="display:none;">
       <div class="card">
@@ -476,14 +568,14 @@
     <div style="margin-bottom:14px;">
       <label>Updated By</label>
       <select id="editOfficer" class="w-100">
-        <option value="Ops Team">Ops Team</option>
         <option value="Admin">Admin</option>
-        <option value="Dzul">Dzul</option>
-        <option value="Aqil">Aqil</option>
-        <option value="Sheikh">Sheikh</option>
         <option value="Ammar">Ammar</option>
-        <option value="Syawal">Syawal</option>
+        <option value="Aqil">Aqil</option>
         <option value="Bakhtiar">Bakhtiar</option>
+        <option value="Dzul">Dzul</option>
+        <option value="Ops Team">Ops Team</option>
+        <option value="Sheikh">Sheikh</option>
+        <option value="Syawal">Syawal</option>
       </select>
     </div>
     <div style="display:flex; gap:8px; justify-content:flex-end;">
@@ -570,12 +662,9 @@
     const dd = String(d.getDate()).padStart(2, "0");
     const mmm = MONTHS[d.getMonth()];
     const yyyy = d.getFullYear();
-    let hours = d.getHours();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    const hh = String(hours).padStart(2, "0");
+    const hh = String(d.getHours()).padStart(2, "0");
     const mm = String(d.getMinutes()).padStart(2, "0");
-    return `${dd} ${mmm} ${yyyy}, ${hh}:${mm} ${ampm}`;
+    return `${dd} ${mmm} ${yyyy}, ${hh}:${mm}`;
   }
 
   function formatAsOfDate(dateInput = new Date()) {
@@ -718,24 +807,27 @@
     }
   }
 
-  function getLatestMovementDate() {
-    if (!state.movements || state.movements.length === 0) return new Date();
+  function getLatestMovementInfo() {
+    if (!state.movements || state.movements.length === 0) {
+      return { date: new Date(), officer: document.getElementById("fridgeOfficer")?.value || "Ops Team" };
+    }
     const latest = state.movements[0];
-    if (latest.created_at) return new Date(latest.created_at);
-    if (latest.entry_date) return new Date(latest.entry_date + "T00:00:00");
-    return new Date();
+    let d = new Date();
+    if (latest.created_at) d = new Date(latest.created_at);
+    else if (latest.entry_date) d = new Date(latest.entry_date + "T00:00:00");
+    return { date: d, officer: latest.officer || "Ops Team" };
   }
 
   function updatePrintHeaders() {
-    const latestDate = getLatestMovementDate();
-    const asOfStr = formatAsOfDate(latestDate);
+    const { date: latestDate, officer } = getLatestMovementInfo();
+    const stampStr = formatPrintStamp(latestDate);
     const titleEl = document.getElementById("partCPrintTitle");
     if (titleEl) {
-      titleEl.textContent = `Fridge & Cage Drink Ops as of ${asOfStr}`;
+      titleEl.textContent = `Stock Balance Report — ${stampStr} (Updated by ${officer})`;
     }
     const partCMeta = document.getElementById("partCPrintMeta");
     if (partCMeta) {
-      partCMeta.textContent = `Last Updated: ${formatPrintStamp(latestDate)}`;
+      partCMeta.textContent = `Printed: ${formatPrintStamp(new Date())} | Last Updated: ${stampStr} by ${officer}`;
     }
   }
 
@@ -769,7 +861,7 @@
     let html = `<option value="">-- Select Drink (A–Z) --</option>`;
     for (const d of activeDrinks) {
       const sel = d.id === selectedId ? "selected" : "";
-      html += `<option value="${d.id}" ${sel}>${d.name} [Cage: ${d.cage_qty} Carton]</option>`;
+      html += `<option value="${d.id}" ${sel}>${d.name}</option>`;
     }
     html += `<option value="__NEW__" ${selectedId === "__NEW__" ? "selected" : ""}>➕ Other / New Drink (Type Name)</option>`;
     return html;
@@ -995,8 +1087,11 @@
     const list = getSortedActiveDrinks(order);
 
     list.forEach((d, idx) => {
-      const cageClass = Number(d.cage_qty) <= 1 ? "low-stock" : "";
+      const cageNum = Number(d.cage_qty);
+      const isZero = cageNum === 0;
+      const cageClass = cageNum <= 1 ? "low-stock" : "";
       const tr = document.createElement("tr");
+      if (isZero) tr.className = "zero-stock-row";
       tr.innerHTML = `
         <td>${idx + 1}</td>
         <td><b>${d.name}</b> ${d.is_new ? '<span class="badge">NEW</span>' : ""}</td>
@@ -1225,6 +1320,32 @@
     document.getElementById(tabId).style.display = "block";
     document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
+  }
+
+  function initQR() {
+    const input = document.getElementById("qrUrlInput");
+    if (!input) return;
+    if (!input.value) {
+      const currentUrl = window.location.href.startsWith("http")
+        ? window.location.href.split("#")[0]
+        : "https://drinks.dzul1234.workers.dev";
+      input.value = currentUrl;
+    }
+    updateQRImage(input.value);
+  }
+
+  function updateQRImage(urlText) {
+    const img = document.getElementById("cageQrImg");
+    if (!img) return;
+    const target = (urlText || "").trim() || window.location.href;
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=6&data=${encodeURIComponent(target)}`;
+  }
+
+  function printQRSticker() {
+    initQR();
+    document.body.classList.add("printing-qr");
+    window.print();
+    setTimeout(() => document.body.classList.remove("printing-qr"), 300);
   }
 
   setTheme(localStorage.getItem("ops_theme") || "dim");
