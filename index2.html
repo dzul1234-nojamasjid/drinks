@@ -1568,10 +1568,10 @@
       .slice(0, 10);
 
     if (ranked.length === 0) {
-      topEl.innerHTML = `<h3>🏆 Top Sellers — ${range.label}</h3><p class="muted">No FRIDGE TOP-UPS recorded in this period.</p>`;
+      topEl.innerHTML = `<h3>📥 Most Topped Up to Fridge — ${range.label}</h3><p class="muted">No FRIDGE TOP-UPS recorded in this period.</p>`;
     } else {
       topEl.innerHTML = `
-        <h3>🏆 Top Sellers — ${range.label}</h3>
+        <h3>📥 Most Topped Up to Fridge — ${range.label}</h3>
         <ol>
           ${ranked.map((x) => `
             <li>
