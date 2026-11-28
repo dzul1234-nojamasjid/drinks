@@ -427,6 +427,7 @@
       <button class="tab-btn" onclick="switchTab('partB', this)">🚚 PART B (CAGE)</button>
       <button class="tab-btn" onclick="switchTab('partC', this)">📊 PART C (BALANCE)</button>
       <button class="tab-btn" onclick="switchTab('logsTab', this)">📋 LOGS</button>
+      <button class="tab-btn" onclick="switchTab('fridgeCheckTab', this); initFridgeCheck();">🧊 FRIDGE CHECK</button>
       <button class="tab-btn" onclick="switchTab('valueTab', this)">💰 VALUE</button>
       <button class="tab-btn" onclick="switchTab('qrTab', this); initQR();">📱 CAGE QR</button>
       <button id="adminTabBtn" class="tab-btn" style="display:none;" onclick="switchTab('adminTab', this)">⚙️ ADMIN</button>
@@ -572,6 +573,61 @@
             </tr>
           </thead>
           <tbody id="logsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FRIDGE SPOT-CHECK TAB -->
+    <section id="fridgeCheckTab" class="tab-panel card" style="display:none;">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px;">
+        <h2 style="margin:0;">🧊 FRIDGE SPOT-CHECK (1–2 Drinks at a Time)</h2>
+        <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button type="button" onclick="exportFridgeChecksCSV()">📄 Export CSV</button>
+          <button type="button" class="btn-primary" onclick="triggerPrint('fridgeCheckTab')">🖨️ Print / Save PDF</button>
+        </div>
+      </div>
+      <p class="panel-subtitle">Quickly record loose cans/bottles found inside the fridge for 1 or 2 drink types at a time, plus remarks.</p>
+
+      <div class="no-print" style="background:var(--surface-2); padding:12px; border-radius:10px; margin-bottom:14px;">
+        <div class="grid-4" style="margin-bottom:8px;">
+          <div>
+            <label>Date &amp; Time</label>
+            <input type="text" id="fcDateTime" class="w-100" />
+          </div>
+          <div>
+            <label>Drink Name</label>
+            <select id="fcDrinkSelect" class="w-100" onchange="toggleFcCustomDrink(this)"></select>
+            <input type="text" id="fcCustomDrink" class="w-100" placeholder="Type new drink name..." style="display:none; margin-top:6px;" />
+          </div>
+          <div>
+            <label>Drinks in Fridge (Cans/Bottles)</label>
+            <input type="number" id="fcQty" class="w-100" min="0" step="1" placeholder="e.g. 18" />
+          </div>
+          <div>
+            <label>Remarks / Notes</label>
+            <input type="text" id="fcNotes" class="w-100" placeholder="e.g. Back row empty / 1 row left" />
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <button type="button" class="btn-success" onclick="addFridgeCheckRecord()">✅ Save Check Row</button>
+          <button type="button" onclick="refreshFcTime()">🕒 Now</button>
+        </div>
+      </div>
+
+      <div id="fcPrintMeta" class="print-only-meta"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date &amp; Time</th>
+              <th>Drink Name</th>
+              <th>Drinks in Fridge</th>
+              <th>Remarks / Notes</th>
+              <th class="no-print">Action</th>
+            </tr>
+          </thead>
+          <tbody id="fcTableBody"></tbody>
         </table>
       </div>
     </section>
@@ -1127,6 +1183,9 @@
         meta.textContent = `Period: ${range.label} | Generated: ${nowStamp} | Selling price default $${DEFAULT_SELL.toFixed(2)}`;
       }
       updatePrintHeaders();
+    } else if (mode === "fridgeCheckTab") {
+      const meta = document.getElementById("fcPrintMeta");
+      if (meta) meta.textContent = `Fridge Spot-Check Log | Printed: ${nowStamp}`;
     } else if (mode === "fridaySummary") {
       const meta = document.getElementById("valuePrintMeta");
       if (meta) {
@@ -1760,6 +1819,7 @@
         _meta: {
           exported_at: new Date().toISOString(),
           prices: getPriceMap(),
+          fridge_checks: getFridgeChecks(),
         },
         ...backup,
       };
@@ -1784,6 +1844,9 @@
       if (parsed._meta && parsed._meta.prices) {
         savePriceMap(parsed._meta.prices);
       }
+      if (parsed._meta && Array.isArray(parsed._meta.fridge_checks)) {
+        saveFridgeChecks(parsed._meta.fridge_checks);
+      }
       const body = { ...parsed };
       delete body._meta;
       await api("/api/restore", { method: "POST", body: JSON.stringify(body) });
@@ -1801,6 +1864,135 @@
     document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     if (tabId === "valueTab") renderValueTab();
+  }
+
+  // ---- FRIDGE SPOT-CHECK (1-2 Drinks at a time) ----
+  const FC_STORAGE_KEY = "ops_fridge_spotchecks_v1";
+
+  function getFridgeChecks() {
+    try {
+      const list = JSON.parse(localStorage.getItem(FC_STORAGE_KEY) || "[]");
+      return Array.isArray(list) ? list : [];
+    } catch { return []; }
+  }
+
+  function saveFridgeChecks(list) {
+    localStorage.setItem(FC_STORAGE_KEY, JSON.stringify(list));
+  }
+
+  function refreshFcTime() {
+    const el = document.getElementById("fcDateTime");
+    if (el) el.value = formatNowCustom(new Date());
+  }
+
+  function toggleFcCustomDrink(sel) {
+    const inp = document.getElementById("fcCustomDrink");
+    if (inp) inp.style.display = sel.value === "__NEW__" ? "block" : "none";
+  }
+
+  function initFridgeCheck() {
+    refreshFcTime();
+    const sel = document.getElementById("fcDrinkSelect");
+    if (sel) {
+      const activeDrinks = getSortedActiveDrinks("AZ");
+      let opts = `<option value="">-- Select Drink (A–Z) --</option>`;
+      for (const d of activeDrinks) {
+        opts += `<option value="${d.name}">${d.name}</option>`;
+      }
+      opts += `<option value="__NEW__">➕ Other / New Drink (Type Name)</option>`;
+      sel.innerHTML = opts;
+    }
+    renderFridgeChecks();
+  }
+
+  function addFridgeCheckRecord() {
+    const dt = (document.getElementById("fcDateTime").value || "").trim() || formatNowCustom(new Date());
+    const selVal = document.getElementById("fcDrinkSelect").value;
+    const customVal = (document.getElementById("fcCustomDrink").value || "").trim();
+    const drinkName = selVal === "__NEW__" ? customVal : selVal;
+    const qtyRaw = document.getElementById("fcQty").value;
+    const notes = (document.getElementById("fcNotes").value || "").trim();
+
+    if (!drinkName) {
+      showToast("⚠️ Please select or type a drink name.");
+      return;
+    }
+    if (qtyRaw === "" || isNaN(Number(qtyRaw)) || Number(qtyRaw) < 0) {
+      showToast("⚠️ Please enter the number of drinks inside the fridge.");
+      return;
+    }
+
+    const list = getFridgeChecks();
+    list.unshift({
+      id: Date.now(),
+      datetime: dt,
+      drink: drinkName,
+      qty: Number(qtyRaw),
+      notes,
+    });
+    saveFridgeChecks(list);
+
+    document.getElementById("fcQty").value = "";
+    document.getElementById("fcNotes").value = "";
+    if (selVal === "__NEW__") {
+      document.getElementById("fcCustomDrink").value = "";
+    }
+    refreshFcTime();
+    renderFridgeChecks();
+    showToast(`✅ Recorded ${drinkName}: ${Number(qtyRaw)} in fridge!`);
+  }
+
+  function deleteFridgeCheck(id) {
+    const updated = getFridgeChecks().filter((item) => item.id !== id);
+    saveFridgeChecks(updated);
+    renderFridgeChecks();
+    showToast("🗑️ Row removed.");
+  }
+
+  function renderFridgeChecks() {
+    const tbody = document.getElementById("fcTableBody");
+    if (!tbody) return;
+    const list = getFridgeChecks();
+    tbody.innerHTML = "";
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--muted); padding:16px;">No fridge spot-checks recorded yet. Pick 1 or 2 drinks above to start!</td></tr>`;
+      return;
+    }
+
+    list.forEach((item, idx) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${item.datetime}</td>
+        <td><b>${item.drink}</b></td>
+        <td><b>${item.qty}</b></td>
+        <td style="color:var(--muted);">${item.notes || "-"}</td>
+        <td class="no-print">
+          <button type="button" class="btn-danger btn-sm" onclick="deleteFridgeCheck(${item.id})">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportFridgeChecksCSV() {
+    const list = getFridgeChecks();
+    const headers = ["No", "Date & Time", "Drink Name", "Drinks in Fridge", "Remarks / Notes"];
+    const rows = list.map((item, i) => [
+      i + 1,
+      `"${String(item.datetime || "").replace(/"/g, '""')}"`,
+      `"${String(item.drink || "").replace(/"/g, '""')}"`,
+      item.qty,
+      `"${String(item.notes || "").replace(/"/g, '""')}"`,
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("
+");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `fridge_spotcheck_${getISOKey(new Date())}.csv`;
+    a.click();
   }
 
   function initQR() {
